@@ -157,7 +157,7 @@
             <!-- Container Logo -->
             <div class="logo-container">
                 <!-- Ganti src di bawah dengan URL logo Anda -->
-                <img id="logo-display" src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='🤖'">
+                <img id="logo-display" src="logo.svg" alt="Logo" class="logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='🤖'">
             </div>
 
             <h1 class="text-4xl md:text-5xl font-bold text-center text-slate-800 mb-2">Eco Ranger</h1>
@@ -166,7 +166,7 @@
             <!-- Tutorial Visual -->
             <div class="flex flex-col items-center justify-center mb-8">
                 <!-- Ganti src dengan gambar tangan Anda -->
-                <img id="hand-tutorial" src="hand.png" class="tutorial-hand-img" alt="Tutorial Hand" onerror="this.src='https://cdn-icons-png.flaticon.com/512/263/263058.png'">
+                <img id="hand-tutorial" src="tangan.svg" class="tutorial-hand-img" alt="Tutorial Hand" onerror="this.src='https://cdn-icons-png.flaticon.com/512/263/263058.png'">
                 <p class="text-sm text-slate-400">Drag & Drop Sampah</p>
             </div>
 
@@ -186,26 +186,31 @@
         // --- KONFIGURASI ASET (GANTI URL DI SINI) ---
         // Path aset disesuaikan dengan root folder (tanpa 'assets/')
         const assetConfig = {
-            logo: 'logo.png', // Logo Game
-            hand: 'hand.png', // Gambar Tangan Tutorial
+            logo: 'logo.png', // Logo Game (Kembali ke PNG)
+            hand: 'tangan.png', // Gambar Tangan Tutorial (Kembali ke PNG)
             feedback: {
-                correct: 'benar.png', // Emote Benar
-                wrong: 'salah.png'    // Emote Salah
+                correct: 'benar.png', // Emote Benar (Kembali ke PNG)
+                wrong: 'salah.png'    // Emote Salah (Kembali ke PNG)
+            },
+            audio: {
+                correct: 'benar.ogg', // Suara Benar
+                wrong: 'salah.ogg',    // Suara Salah
+                bgm: 'bgmusic.ogg'     // Background Music
             },
             bins: {
                 organik: {
-                    idle: 'organik_1.png',   // Gambar tong diam
-                    active: 'organik_2.png', // Gambar tong saat ada sampah di atasnya
-                    color: '#4ade80' // Fallback warna jika gambar gagal load
+                    idle: 'organik_1.png',   // (Kembali ke PNG)
+                    active: 'organik_2.png', // (Kembali ke PNG)
+                    color: '#4ade80' 
                 },
                 anorganik: {
-                    idle: 'anorganik_1.png',
-                    active: 'anorganik_2.png',
+                    idle: 'anorganik_1.png',   // (Kembali ke PNG)
+                    active: 'anorganik_2.png', // (Kembali ke PNG)
                     color: '#facc15'
                 },
                 b3: {
-                    idle: 'b3_1.png',
-                    active: 'b3_2.png',
+                    idle: 'berbahaya_1.png',   // (Kembali ke PNG)
+                    active: 'berbahaya_2.png', // (Kembali ke PNG)
                     color: '#ef4444'
                 }
             }
@@ -239,7 +244,7 @@
             loadedImages[key] = img;
         }
 
-        // Load semua aset game
+        // Load Images
         preloadImage('correct', assetConfig.feedback.correct);
         preloadImage('wrong', assetConfig.feedback.wrong);
         preloadImage('bin_organik_idle', assetConfig.bins.organik.idle);
@@ -248,6 +253,40 @@
         preloadImage('bin_anorganik_active', assetConfig.bins.anorganik.active);
         preloadImage('bin_b3_idle', assetConfig.bins.b3.idle);
         preloadImage('bin_b3_active', assetConfig.bins.b3.active);
+
+        // --- AUDIO SYSTEM ---
+        const loadedAudio = {};
+        function preloadAudio(key, src, loop = false) {
+            const audio = new Audio(src);
+            audio.loop = loop;
+            loadedAudio[key] = audio;
+        }
+        
+        preloadAudio('correct', assetConfig.audio.correct);
+        preloadAudio('wrong', assetConfig.audio.wrong);
+        preloadAudio('bgm', assetConfig.audio.bgm, true); // Load BGM dengan loop=true
+
+        function playSound(key) {
+            const audio = loadedAudio[key];
+            if (audio) {
+                // Jangan reset bgm jika sedang main
+                if (key !== 'bgm') {
+                    audio.currentTime = 0;
+                }
+                
+                audio.play().catch(e => {
+                    console.log("Audio play failed:", e);
+                });
+            }
+        }
+
+        function stopSound(key) {
+            const audio = loadedAudio[key];
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        }
 
         // State Variabel
         let gameLoopId;
@@ -291,7 +330,6 @@
                 this.x = x;
                 this.width = width;
                 this.height = width * 1.2; // Rasio tinggi gambar
-                // Batasi tinggi max agar tidak terlalu besar
                 if (this.height > 150) this.height = 150;
                 
                 this.y = canvas.height - this.height - 20; 
@@ -299,17 +337,14 @@
             }
 
             draw() {
-                // Tentukan gambar mana yang dipakai (idle atau active)
                 const imgKey = `bin_${this.type}_${this.isHovered ? 'active' : 'idle'}`;
                 const img = loadedImages[imgKey];
 
                 if (img && img.complete && img.naturalHeight !== 0) {
-                    // Gambar Image
                     ctx.drawImage(img, this.x, this.y, this.width, this.height);
                 } else {
-                    // Fallback Render (Kotak biasa jika gambar error/belum load)
                     ctx.fillStyle = this.fallbackColor;
-                    if (this.isHovered) ctx.fillStyle = '#ffffff'; // Highlight jika hover
+                    if (this.isHovered) ctx.fillStyle = '#ffffff'; 
                     ctx.beginPath();
                     ctx.roundRect(this.x, this.y, this.width, this.height, 10);
                     ctx.fill();
@@ -367,17 +402,16 @@
 
         class FeedbackEffect {
             constructor(type) {
-                // Posisi Random di layar
                 this.x = Math.random() * (canvas.width - 100) + 50;
                 this.y = Math.random() * (canvas.height - 200) + 100;
                 
-                this.type = type; // 'correct' or 'wrong'
+                this.type = type; 
                 this.life = 1.0;
                 this.scale = 0.5;
             }
             update() {
                 this.life -= 0.02;
-                if (this.scale < 1.0) this.scale += 0.05; // Efek pop-up
+                if (this.scale < 1.0) this.scale += 0.05; 
             }
             draw() {
                 ctx.globalAlpha = Math.max(0, this.life);
@@ -388,7 +422,6 @@
                     const h = 80 * this.scale;
                     ctx.drawImage(img, this.x - w/2, this.y - h/2, w, h);
                 } else {
-                    // Fallback text jika gambar gagal load
                     ctx.font = "bold 30px Fredoka";
                     ctx.fillStyle = this.type === 'correct' ? '#16a34a' : '#ef4444';
                     ctx.textAlign = "center";
@@ -431,6 +464,9 @@
 
         function spawnFeedback(type) {
             feedbackEffects.push(new FeedbackEffect(type));
+            // Mainkan suara sesuai feedback
+            if (type === 'correct') playSound('correct');
+            else playSound('wrong');
         }
 
         function updateGame(timestamp) {
@@ -443,14 +479,10 @@
 
             // Update & Draw Bins
             bins.forEach(bin => {
-                // Reset hover state
                 bin.isHovered = false;
-                
-                // Cek jika sedang ada sampah didrag di atas tong ini
                 if (dragItem && checkCollision(dragItem, bin)) {
                     bin.isHovered = true;
                 }
-
                 bin.draw();
             });
 
@@ -465,12 +497,12 @@
                     trashes.splice(i, 1);
                     lives--;
                     updateUI();
-                    spawnFeedback('wrong');
+                    spawnFeedback('wrong'); // Mainkan suara salah
                     if (lives <= 0) endGame();
                 }
             }
 
-            // Update & Draw Feedback (Gambar Benar/Salah)
+            // Update & Draw Feedback
             for (let i = feedbackEffects.length - 1; i >= 0; i--) {
                 feedbackEffects[i].update();
                 feedbackEffects[i].draw();
@@ -526,11 +558,11 @@
                     if (dragItem.type === bin.type) {
                         // BENAR
                         score += 10;
-                        spawnFeedback('correct'); // Muncul random
+                        spawnFeedback('correct'); 
                     } else {
                         // SALAH
                         lives--;
-                        spawnFeedback('wrong'); // Muncul random
+                        spawnFeedback('wrong'); 
                     }
                     break;
                 }
@@ -575,6 +607,9 @@
             resizeCanvas();
             updateUI();
             
+            // Start Background Music
+            playSound('bgm');
+
             lastSpawnTime = performance.now();
             if (gameLoopId) cancelAnimationFrame(gameLoopId);
             gameLoopId = requestAnimationFrame(updateGame);
@@ -584,6 +619,9 @@
             isPlaying = false;
             cancelAnimationFrame(gameLoopId);
             
+            // Stop Background Music
+            stopSound('bgm');
+
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('ecoRangerHighScore', highScore);
