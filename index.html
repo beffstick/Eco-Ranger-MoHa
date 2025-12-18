@@ -270,7 +270,7 @@
             <button onclick="showScreen('menu-screen')" class="btn btn-primary mt-4">Kembali</button>
         </div>
 
-        <!-- 5. LEADERBOARD SCREEN (NEW) -->
+        <!-- 5. LEADERBOARD SCREEN -->
         <div id="leaderboard-screen" class="ui-overlay hidden">
             <h2 class="text-3xl font-bold text-purple-700 mb-4">🏆 Papan Peringkat</h2>
             
@@ -333,7 +333,12 @@
             logo: 'assets/logo.png',
             hand: 'assets/tangan.png',
             feedback: { correct: 'assets/benar.png', wrong: 'assets/salah.png' },
-            audio: { correct: 'assets/benar.ogg', wrong: 'assets/salah.ogg', bgm: 'assets/bgmusic.ogg' },
+            audio: { 
+                correct: 'assets/benar.ogg', 
+                wrong: 'assets/salah.ogg', 
+                bgm: 'assets/bgmusic.ogg',
+                touch: 'assets/touch.ogg' // ADDED TOUCH SOUND
+            },
             bins: {
                 organik: { idle: 'assets/organik_1.png', active: 'assets/organik_2.png', color: '#4ade80' },
                 anorganik: { idle: 'assets/anorganik_1.png', active: 'assets/anorganik_2.png', color: '#facc15' },
@@ -395,9 +400,6 @@
 
             list.forEach((item, index) => {
                 let nameDisplay = item.name;
-                // Format display for 2P: "Winner vs Loser" or similar logic?
-                // For simplicity we saved "P1 vs P2" as name in 2P logic below
-                
                 const div = document.createElement('div');
                 div.className = 'lb-item';
                 div.innerHTML = `
@@ -424,9 +426,8 @@
             } else {
                 const p2Name = document.getElementById('input-p2').value.trim() || 'Player 2';
                 // Determine Winner for display or save the match result
-                let winnerName = "";
-                let winningScore = 0;
                 let text = "";
+                let winningScore = 0;
 
                 if (players[0].score > players[1].score) {
                     text = `${p1Name} (Win) vs ${p2Name}`;
@@ -441,7 +442,7 @@
 
                 const entry = {
                     name: text,
-                    score: winningScore, // Sort by winning score
+                    score: winningScore, 
                     mode: modeLabel,
                     date: new Date().toISOString()
                 };
@@ -470,6 +471,7 @@
         preloadAudio('correct', assetConfig.audio.correct, false);
         preloadAudio('wrong', assetConfig.audio.wrong, false);
         preloadAudio('bgm', assetConfig.audio.bgm, true);
+        preloadAudio('touch', assetConfig.audio.touch, false); // PRELOAD TOUCH
 
         ['organik', 'anorganik', 'berbahaya'].forEach(type => {
             for(let i=1; i<=10; i++) {
@@ -529,9 +531,22 @@
                 } else if (this.lives <= 0) this.isGameOver = true;
 
                 this.spawnTrash(timestamp);
+
+                // Reset hover state for all bins
+                this.bins.forEach(b => b.isHovered = false);
+
                 for (let i = this.trashes.length - 1; i >= 0; i--) {
                     let t = this.trashes[i];
                     if (t.draggingBy === null) t.update();
+                    else {
+                        // Check overlap with bins to trigger animation
+                        for (let b of this.bins) {
+                            if (t.x > b.x && t.x < b.x + b.width && t.y > b.y && t.y < b.y + b.height) {
+                                b.isHovered = true;
+                            }
+                        }
+                    }
+
                     if (t.y > this.height + 50) { this.trashes.splice(i, 1); this.handleResult('miss'); }
                 }
                 for (let i = this.feedbackEffects.length - 1; i >= 0; i--) {
@@ -604,11 +619,14 @@
             constructor(type, label, color, x, width) {
                 this.type = type; this.label = label; this.fallbackColor = color;
                 this.x = x; this.width = width; this.height = 0;
+                this.isHovered = false; // Add hover state
             }
             draw(ctx, parentHeight) {
                 this.height = Math.min(this.width * 1.2, 130);
                 this.y = parentHeight - this.height - 20;
-                let k = `bin_${this.type}_idle`;
+                
+                // Select image based on hover state
+                let k = `bin_${this.type}_${this.isHovered ? 'active' : 'idle'}`;
                 let img = loadedImages[k];
                 if(img && img.complete) ctx.drawImage(img, this.x, this.y, this.width, this.height);
                 else {
@@ -807,6 +825,7 @@
             showScreen('game-over-screen');
         }
 
+        // --- INPUT HANDLING WITH SOUND ---
         function handleInput(e, type) {
             if(!isPlaying || isPaused) return;
             e.preventDefault();
@@ -817,11 +836,25 @@
                 let pIdx = 0; let pWidth = canvas.width / gameConfig.players;
                 if (gameConfig.players === 2 && gx > pWidth) pIdx = 1;
                 let localX = gx - (pIdx * pWidth); let player = players[pIdx];
-                if (type === 'start') player.inputStart(t.identifier, localX, gy);
+                if (type === 'start') {
+                    // Play Touch Sound
+                    let aud = loadedAudio['touch'];
+                    if(aud) { aud.currentTime=0; aud.play().catch(()=>{}); }
+                    
+                    player.inputStart(t.identifier, localX, gy);
+                }
                 else if (type === 'move') player.inputMove(t.identifier, localX, gy);
                 else if (type === 'end') player.inputEnd(t.identifier);
             });
         }
+
+        // UI Sound Listener
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let aud = loadedAudio['touch'];
+                if(aud) { aud.currentTime=0; aud.play().catch(()=>{}); }
+            });
+        });
 
         canvas.addEventListener('mousedown', e => handleInput(e, 'start'));
         canvas.addEventListener('mousemove', e => handleInput(e, 'move'));
