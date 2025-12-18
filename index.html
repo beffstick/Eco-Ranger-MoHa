@@ -187,34 +187,34 @@
     </div>
 
     <script>
-        // --- KONFIGURASI ASET ---
+        // --- KONFIGURASI ASET (UPDATED: Folder Assets) ---
         const assetConfig = {
-            background: 'background.jpg', // Background Game (BARU)
-            logo: 'logo.png',
-            hand: 'tangan.png',
+            background: 'assets/background.jpg', 
+            logo: 'assets/logo.png',
+            hand: 'assets/tangan.png',
             feedback: {
-                correct: 'benar.png',
-                wrong: 'salah.png'
+                correct: 'assets/benar.png',
+                wrong: 'assets/salah.png'
             },
             audio: {
-                correct: 'benar.ogg',
-                wrong: 'salah.ogg',
-                bgm: 'bgmusic.ogg'
+                correct: 'assets/benar.ogg',
+                wrong: 'assets/salah.ogg',
+                bgm: 'assets/bgmusic.ogg'
             },
             bins: {
                 organik: {
-                    idle: 'organik_1.png',
-                    active: 'organik_2.png',
+                    idle: 'assets/organik_1.png',
+                    active: 'assets/organik_2.png',
                     color: '#4ade80' 
                 },
                 anorganik: {
-                    idle: 'anorganik_1.png',
-                    active: 'anorganik_2.png',
+                    idle: 'assets/anorganik_1.png',
+                    active: 'assets/anorganik_2.png',
                     color: '#facc15'
                 },
                 berbahaya: {
-                    idle: 'berbahaya_1.png',
-                    active: 'berbahaya_2.png',
+                    idle: 'assets/berbahaya_1.png',
+                    active: 'assets/berbahaya_2.png',
                     color: '#ef4444'
                 }
             }
@@ -270,7 +270,7 @@
 
         function generateAndPreloadTrash(type, prefix) {
             for (let i = 1; i <= 10; i++) {
-                const filename = `${prefix}_${i}.png`; // Format nama file
+                const filename = `assets/${prefix}_${i}.png`; // Update path ke folder assets
                 const key = `${type}_${i}`;
                 
                 // Simpan key ke trashData agar bisa dipilih random nanti
@@ -284,7 +284,7 @@
         // Generate data sampah: sampah_organik_1 s/d 10, dll.
         generateAndPreloadTrash('organik', 'sampah_organik');
         generateAndPreloadTrash('anorganik', 'sampah_anorganik');
-        generateAndPreloadTrash('berbahaya', 'sampah_berbahaya'); // 'berbahaya' sesuai request
+        generateAndPreloadTrash('berbahaya', 'sampah_berbahaya'); 
 
         // --- AUDIO SYSTEM ---
         const loadedAudio = {};
@@ -395,50 +395,68 @@
                 this.y = -60;
                 this.speed = baseSpeed + (Math.random() * 0.5) + (score / 100);
                 this.isDragging = false;
+
+                // --- ROTASI RANDOM ---
+                this.angle = Math.random() * Math.PI * 2; // Alignment awal random (0 - 360 derajat)
+                this.spinSpeed = (Math.random() - 0.5) * 0.1; // Kecepatan putar random (bisa ke kiri atau kanan)
             }
 
             update() {
                 if (!this.isDragging) {
                     this.y += this.speed;
+                    this.angle += this.spinSpeed; // Berputar saat jatuh
                 }
             }
 
             draw() {
-                // Ambil gambar berdasarkan key
                 const img = loadedImages[this.imgKey];
 
-                // Jika sedang di drag, gambar tangan robot dulu di belakangnya
+                ctx.save(); // Simpan state canvas sebelum translasi/rotasi
+                ctx.translate(this.x, this.y); // Pindahkan titik pusat canvas ke tengah objek sampah
+
+                // --- 1. GAMBAR TANGAN ROBOT (Jika sedang di-drag) ---
+                // Tangan digambar tegak lurus (tidak ikut rotasi sampah) agar terlihat natural
                 if (this.isDragging) {
                     const handImg = loadedImages['hand'];
                     if (handImg && handImg.complete && handImg.naturalHeight !== 0) {
                         const hw = 100; 
                         const hh = 100 * (handImg.naturalHeight / handImg.naturalWidth);
-                        ctx.drawImage(handImg, this.x - hw/2, this.y - hh/2, hw, hh);
+                        // Gambar tangan centered (titik 0,0 sekarang adalah tengah objek)
+                        ctx.drawImage(handImg, -hw/2, -hh/2, hw, hh);
                     }
-                    
-                    // Efek bayangan saat drag
-                    ctx.globalAlpha = 0.6;
-                }
-
-                if (img && img.complete && img.naturalHeight !== 0) {
-                    // Gambar Trash
-                    const drawSize = this.isDragging ? this.size * 1.2 : this.size;
-                    const offsetX = drawSize / 2;
-                    const offsetY = drawSize / 2;
-                    ctx.drawImage(img, this.x - offsetX, this.y - offsetY, drawSize, drawSize);
+                    ctx.globalAlpha = 0.6; // Efek transparan sedikit saat dipegang
                 } else {
-                    // Fallback jika gambar sampah belum load (Lingkaran warna)
+                    // Hanya rotasi jika sampah sedang jatuh (tidak dipegang)
+                    // Atau jika ingin sampah tetap miring saat dipegang, pindahkan rotate ke luar if-else ini.
+                    // Request: "berjatuhan berputar". Mari kita biarkan rotasi apply di state terakhirnya.
+                    ctx.rotate(this.angle);
+                }
+                
+                // Jika ingin sampah tetap miring saat dipegang (tapi tidak berputar), aktifkan rotate ini selalu:
+                // ctx.rotate(this.angle); 
+                // Catatan: Logika di atas (else) membuat sampah tegak saat dipegang tangan robot (reset rotasi).
+                // Jika ingin tetap miring saat dipegang:
+                if (this.isDragging) ctx.rotate(this.angle); 
+
+                // --- 2. GAMBAR SAMPAH ---
+                if (img && img.complete && img.naturalHeight !== 0) {
+                    const drawSize = this.isDragging ? this.size * 1.2 : this.size;
+                    // Gambar image centered di (0,0) hasil translasi
+                    ctx.drawImage(img, -drawSize/2, -drawSize/2, drawSize, drawSize);
+                } else {
+                    // Fallback Shape
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size/2, 0, Math.PI * 2);
+                    ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
                     ctx.fillStyle = this.type === 'organik' ? 'green' : (this.type === 'anorganik' ? 'yellow' : 'red');
                     ctx.fill();
                     ctx.fillStyle = 'black';
                     ctx.textAlign = 'center';
                     ctx.font = '12px Arial';
-                    ctx.fillText("?", this.x, this.y);
+                    ctx.fillText("?", 0, 0); // Text centered at 0,0
                 }
 
-                ctx.globalAlpha = 1.0;
+                ctx.restore(); // Kembalikan state canvas (hilangkan translasi/rotasi untuk objek berikutnya)
+                ctx.globalAlpha = 1.0; // Reset alpha
             }
         }
 
