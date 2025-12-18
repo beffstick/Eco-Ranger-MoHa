@@ -22,7 +22,6 @@
             width: 100%;
             height: 100vh;
             margin: 0 auto;
-            /* Default responsive behavior */
             max-width: 100%; 
             background: linear-gradient(180deg, #bae6fd 0%, #f0f9ff 100%);
             background-size: cover;
@@ -33,14 +32,12 @@
             transition: max-width 0.3s;
         }
 
-        /* Mode 1 Player: Limit width on large screens for better UX */
         #game-container.single-player {
             max-width: 600px; 
             border-left: 1px solid #ccc;
             border-right: 1px solid #ccc;
         }
 
-        /* Mode 2 Player: Full width */
         #game-container.two-player {
             max-width: 100%;
         }
@@ -70,9 +67,7 @@
             overflow-y: auto;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* Buttons */
         .btn {
@@ -97,6 +92,7 @@
         .btn-warning { background: #f59e0b; color: white; border-bottom: 5px solid #b45309; }
         .btn-danger { background: #ef4444; color: white; border-bottom: 5px solid #b91c1c; }
         .btn-purple { background: #8b5cf6; color: white; border-bottom: 5px solid #6d28d9; }
+        .btn-secondary { background: #64748b; color: white; border-bottom: 5px solid #475569; }
 
         .btn.selected {
             border: 3px solid #000;
@@ -104,38 +100,53 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
         }
 
-        /* HUD - Split Logic */
-        .hud-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Inputs */
+        .input-field {
             width: 100%;
-            height: 100%;
-            pointer-events: none; /* Let clicks pass through */
-            z-index: 10;
+            padding: 10px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            text-align: center;
         }
+        .input-field:focus { outline: none; border-color: #0ea5e9; }
 
-        .hud-panel {
+        /* Pause Button */
+        #pause-btn {
             position: absolute;
             top: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 6px 12px;
-            border-radius: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            background: white;
             border: 2px solid #333;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-            white-space: nowrap;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            transition: transform 0.1s;
         }
+        #pause-btn:active { transform: translateX(-50%) translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
 
-        /* Player 1 HUD (Left/Single) */
+        /* HUD */
+        .hud-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        .hud-panel {
+            position: absolute; top: 10px; background: rgba(255, 255, 255, 0.9);
+            padding: 6px 12px; border-radius: 8px; border: 2px solid #333;
+            font-size: 1rem; font-weight: bold; box-shadow: 2px 2px 0 rgba(0,0,0,0.2); white-space: nowrap;
+        }
         .p1-hud.score { left: 10px; color: #16a34a; }
-        .p1-hud.stat { right: 10px; color: #ef4444; } /* Default single player pos */
-        .p1-hud.center { left: 50%; transform: translateX(-50%); top: 50px; font-size: 0.8rem; }
-
-        /* Player 2 HUD (Right - only visible in 2P) */
+        .p1-hud.stat { right: 10px; color: #ef4444; }
+        .p1-hud.center { left: 50%; transform: translateX(-50%); top: 60px; font-size: 0.8rem; }
         .p2-hud { display: none; }
-        .two-player-mode .p1-hud.stat { right: 52%; } /* Shift P1 stat to near center-left */
+        .two-player-mode .p1-hud.stat { right: 52%; }
         .two-player-mode .p2-hud { display: block; }
         .two-player-mode .p2-hud.score { left: 52%; color: #16a34a; }
         .two-player-mode .p2-hud.stat { right: 10px; color: #ef4444; }
@@ -146,6 +157,17 @@
             display: flex; align-items: center; gap: 15px;
         }
         .logo-img { height: 80px; margin-bottom: 10px; }
+
+        /* Leaderboard Styles */
+        .tab-container { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 400px; }
+        .tab-btn { flex: 1; padding: 8px; border-radius: 8px; background: #e2e8f0; font-weight: bold; color: #64748b; cursor: pointer; }
+        .tab-btn.active { background: #0ea5e9; color: white; }
+        .lb-list { width: 100%; max-width: 400px; background: white; border-radius: 12px; padding: 10px; max-height: 300px; overflow-y: auto; border: 2px solid #e2e8f0; }
+        .lb-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .lb-item:last-child { border-bottom: none; }
+        .lb-rank { font-weight: bold; color: #0ea5e9; width: 30px; }
+        .lb-name { flex: 1; text-align: left; font-weight: 600; color: #334155; }
+        .lb-score { font-weight: bold; color: #16a34a; }
     </style>
 </head>
 <body>
@@ -153,16 +175,14 @@
     <div id="game-container" class="single-player">
         <!-- HUD Layer -->
         <div id="hud-layer" class="hud-layer">
-            <!-- P1 HUD -->
             <div id="p1-score" class="hud-panel p1-hud score">P1 Skor: 0</div>
             <div id="p1-stat" class="hud-panel p1-hud stat">⏳ 60</div>
             <div id="p1-level" class="hud-panel p1-hud center">Lv.1</div>
-
-            <!-- P2 HUD -->
             <div id="p2-score" class="hud-panel p2-hud score">P2 Skor: 0</div>
             <div id="p2-stat" class="hud-panel p2-hud stat">⏳ 60</div>
         </div>
-
+        
+        <button id="pause-btn" class="hidden" onclick="togglePause()">⏸️</button>
         <canvas id="gameCanvas"></canvas>
 
         <!-- 1. MAIN MENU -->
@@ -172,6 +192,7 @@
             <p class="text-sm text-slate-500 mb-6 font-bold">EDUKASI PILAH SAMPAH</p>
             
             <button onclick="showScreen('setup-screen')" class="btn btn-primary">🎮 Mulai Main</button>
+            <button onclick="showLeaderboard()" class="btn btn-purple">🏆 Leaderboard</button>
             <button onclick="showScreen('tutorial-screen')" class="btn btn-warning">📖 Cara Bermain</button>
             <button onclick="showScreen('materi-screen')" class="btn btn-success">📚 Materi Sampah</button>
         </div>
@@ -179,8 +200,6 @@
         <!-- 2. SETUP SCREEN -->
         <div id="setup-screen" class="ui-overlay hidden">
             <h2 class="text-xl font-bold text-slate-700 mb-2">Setup Permainan</h2>
-            
-            <!-- Players Select -->
             <div class="w-full max-w-sm mb-3">
                 <p class="text-xs font-bold text-slate-400 mb-1">Jumlah Pemain:</p>
                 <div class="flex gap-2">
@@ -188,11 +207,9 @@
                     <button id="pl-2" onclick="selectPlayers(2)" class="btn btn-purple flex-1 py-2 text-sm">👥 2 Players</button>
                 </div>
                 <p id="p2-warning" class="hidden text-xs text-orange-600 bg-orange-100 p-2 rounded text-center mt-2 border border-orange-200">
-                    <strong>Tips:</strong> Mode 2 Player telah dioptimalkan untuk semua layar, namun akan lebih nyaman dan seru jika dimainkan di layar lebar (Tablet/TV).
+                    <strong>Tips:</strong> Mode 2 Player optimal di layar lebar.
                 </p>
             </div>
-
-            <!-- Mode Toggle -->
             <div class="w-full max-w-sm mb-3">
                 <p class="text-xs font-bold text-slate-400 mb-1">Mode:</p>
                 <div class="flex gap-2">
@@ -200,8 +217,6 @@
                     <button id="mode-endless" onclick="selectMode('endless')" class="btn btn-primary flex-1 py-2 text-sm">Endless</button>
                 </div>
             </div>
-
-            <!-- Level Select -->
             <div class="w-full max-w-sm mb-3">
                 <p class="text-xs font-bold text-slate-400 mb-1">Kesulitan:</p>
                 <div class="flex flex-col gap-1">
@@ -210,8 +225,6 @@
                     <button id="lvl-3" onclick="selectLevel(3)" class="btn btn-danger py-1 text-sm">⚔️ Eco Ranger</button>
                 </div>
             </div>
-
-            <!-- Duration (Time Mode Only) -->
             <div id="duration-selector" class="w-full max-w-sm mb-4">
                 <p class="text-xs font-bold text-slate-400 mb-1">Durasi:</p>
                 <div class="flex gap-2">
@@ -220,7 +233,6 @@
                     <button id="dur-3" onclick="selectDuration(3)" class="btn btn-primary py-1 text-sm">3 Min</button>
                 </div>
             </div>
-
             <div class="flex gap-2 w-full max-w-sm mt-2">
                 <button onclick="showScreen('menu-screen')" class="btn bg-slate-400 text-white">Kembali</button>
                 <button onclick="startGame()" class="btn btn-success">Mulai! ▶</button>
@@ -234,7 +246,7 @@
             <ul class="text-left list-disc pl-6 space-y-2 text-slate-700 max-w-sm text-sm">
                 <li>Sampah jatuh dari atas.</li>
                 <li><strong>Drag & Drop</strong> sampah ke tong yang benar.</li>
-                <li><strong>Mode 2 Player:</strong> Layar terbagi dua. Pemain 1 kiri, Pemain 2 kanan. Jangan lewati garis batas!</li>
+                <li><strong>Mode 2 Player:</strong> Layar terbagi dua. Pemain 1 kiri, Pemain 2 kanan.</li>
                 <li><span class="text-green-600 font-bold">Benar +10</span>, <span class="text-red-500 font-bold">Salah -5</span>, <span class="text-orange-500 font-bold">Lewat -3</span>.</li>
             </ul>
             <button onclick="showScreen('menu-screen')" class="btn btn-primary mt-8">Kembali</button>
@@ -258,17 +270,59 @@
             <button onclick="showScreen('menu-screen')" class="btn btn-primary mt-4">Kembali</button>
         </div>
 
-        <!-- 5. GAME OVER -->
+        <!-- 5. LEADERBOARD SCREEN (NEW) -->
+        <div id="leaderboard-screen" class="ui-overlay hidden">
+            <h2 class="text-3xl font-bold text-purple-700 mb-4">🏆 Papan Peringkat</h2>
+            
+            <div class="tab-container">
+                <div id="tab-1p" class="tab-btn active" onclick="switchLbTab('1p')">Solo (1P)</div>
+                <div id="tab-2p" class="tab-btn" onclick="switchLbTab('2p')">Duel (2P)</div>
+            </div>
+
+            <div class="bg-slate-100 p-2 rounded-t-lg w-full max-w-[400px] flex text-xs font-bold text-slate-500">
+                <span class="w-[30px] text-center">#</span>
+                <span class="flex-1 pl-2">Nama Pemain</span>
+                <span class="w-[80px] text-right pr-2">Skor</span>
+            </div>
+            <div id="lb-content" class="lb-list">
+                <!-- Content injected via JS -->
+            </div>
+
+            <button onclick="showScreen('menu-screen')" class="btn btn-primary mt-4">Kembali</button>
+        </div>
+
+        <!-- 6. PAUSE SCREEN -->
+        <div id="pause-screen" class="ui-overlay hidden">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Permainan Dijeda</h2>
+            <button onclick="resumeGame()" class="btn btn-primary">▶ Lanjutkan</button>
+            <button onclick="quitToMenu()" class="btn btn-danger">🏠 Keluar ke Menu</button>
+        </div>
+
+        <!-- 7. GAME OVER -->
         <div id="game-over-screen" class="ui-overlay hidden">
             <h1 id="go-title" class="text-3xl font-bold text-slate-800 mb-2">Selesai!</h1>
             
-            <!-- Result Container -->
-            <div id="go-results" class="flex flex-col gap-4 mb-6 w-full max-w-md">
-                <!-- Injected via JS -->
+            <div id="go-results" class="flex flex-col gap-4 mb-4 w-full max-w-md"></div>
+
+            <!-- Input Nama untuk Leaderboard -->
+            <div id="save-score-container" class="w-full max-w-xs bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
+                <h3 class="text-sm font-bold text-slate-500 mb-2 text-center">Simpan ke Leaderboard</h3>
+                
+                <div id="input-p1-container">
+                    <input type="text" id="input-p1" class="input-field" placeholder="Nama Pemain 1" maxlength="10">
+                </div>
+                
+                <div id="input-p2-container" class="hidden">
+                    <input type="text" id="input-p2" class="input-field" placeholder="Nama Pemain 2" maxlength="10">
+                </div>
+
+                <button onclick="submitScore()" class="btn btn-purple py-2 text-sm mt-2">💾 Simpan Skor</button>
             </div>
 
-            <button onclick="showScreen('setup-screen')" class="btn btn-primary">Main Lagi ↺</button>
-            <button onclick="showScreen('menu-screen')" class="btn btn-warning">Menu Utama 🏠</button>
+            <div class="flex gap-2 w-full max-w-xs">
+                <button onclick="showScreen('setup-screen')" class="btn btn-primary flex-1">Main Lagi</button>
+                <button onclick="showScreen('menu-screen')" class="btn btn-warning flex-1">Menu</button>
+            </div>
         </div>
     </div>
 
@@ -291,19 +345,113 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const container = document.getElementById('game-container');
+        const pauseBtn = document.getElementById('pause-btn');
         
         // Game Settings
-        let gameConfig = {
-            players: 1, // 1 or 2
-            mode: 'time',
-            level: 1,
-            duration: 1
-        };
+        let gameConfig = { players: 1, mode: 'time', level: 1, duration: 1 };
 
-        let players = []; // Array of GameInstance
+        let players = [];
         let isPlaying = false;
+        let isPaused = false;
+        let pauseStartTime = 0;
         let gameLoopId;
         
+        // --- LEADERBOARD LOGIC ---
+        const LB_KEY_1P = 'ecoRanger_lb_1p';
+        const LB_KEY_2P = 'ecoRanger_lb_2p';
+
+        function getLeaderboard(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveToLeaderboard(key, entry) {
+            const list = getLeaderboard(key);
+            list.push(entry);
+            // Sort Descending by Score
+            list.sort((a, b) => b.score - a.score);
+            // Keep Top 10
+            const top10 = list.slice(0, 10);
+            localStorage.setItem(key, JSON.stringify(top10));
+        }
+
+        function showLeaderboard() {
+            showScreen('leaderboard-screen');
+            switchLbTab('1p'); // Default tab
+        }
+
+        function switchLbTab(type) {
+            document.getElementById('tab-1p').classList.toggle('active', type === '1p');
+            document.getElementById('tab-2p').classList.toggle('active', type === '2p');
+            
+            const list = getLeaderboard(type === '1p' ? LB_KEY_1P : LB_KEY_2P);
+            const container = document.getElementById('lb-content');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-400 py-4">Belum ada skor tersimpan.</div>';
+                return;
+            }
+
+            list.forEach((item, index) => {
+                let nameDisplay = item.name;
+                // Format display for 2P: "Winner vs Loser" or similar logic?
+                // For simplicity we saved "P1 vs P2" as name in 2P logic below
+                
+                const div = document.createElement('div');
+                div.className = 'lb-item';
+                div.innerHTML = `
+                    <div class="lb-rank">${index + 1}</div>
+                    <div class="lb-name truncate">${nameDisplay} <span class="text-xs text-slate-400 font-normal">(${item.mode})</span></div>
+                    <div class="lb-score">${item.score}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function submitScore() {
+            const p1Name = document.getElementById('input-p1').value.trim() || 'Player 1';
+            const modeLabel = gameConfig.mode === 'time' ? 'Time' : 'Endless';
+
+            if (gameConfig.players === 1) {
+                const entry = {
+                    name: p1Name,
+                    score: players[0].score,
+                    mode: modeLabel,
+                    date: new Date().toISOString()
+                };
+                saveToLeaderboard(LB_KEY_1P, entry);
+            } else {
+                const p2Name = document.getElementById('input-p2').value.trim() || 'Player 2';
+                // Determine Winner for display or save the match result
+                let winnerName = "";
+                let winningScore = 0;
+                let text = "";
+
+                if (players[0].score > players[1].score) {
+                    text = `${p1Name} (Win) vs ${p2Name}`;
+                    winningScore = players[0].score;
+                } else if (players[1].score > players[0].score) {
+                    text = `${p2Name} (Win) vs ${p1Name}`;
+                    winningScore = players[1].score;
+                } else {
+                    text = `${p1Name} = ${p2Name}`;
+                    winningScore = players[0].score;
+                }
+
+                const entry = {
+                    name: text,
+                    score: winningScore, // Sort by winning score
+                    mode: modeLabel,
+                    date: new Date().toISOString()
+                };
+                saveToLeaderboard(LB_KEY_2P, entry);
+            }
+            
+            alert('Skor berhasil disimpan!');
+            showLeaderboard();
+        }
+
         // --- PRELOAD ASSETS ---
         const loadedImages = {};
         const loadedAudio = {};
@@ -331,244 +479,122 @@
             }
         });
 
-        // --- GAME INSTANCE CLASS (Untuk Multi-Player) ---
+        // --- GAME INSTANCE CLASS ---
         class GameInstance {
             constructor(id, xOffset, width, height) {
-                this.id = id; // 0 or 1
-                this.xOffset = xOffset;
-                this.width = width;
-                this.height = height;
-                
-                // State
-                this.score = 0;
-                this.lives = 5;
-                this.isGameOver = false;
-                this.consecutiveCorrect = 0;
-                
-                // Time Mode State
+                this.id = id; this.xOffset = xOffset; this.width = width; this.height = height;
+                this.score = 0; this.lives = 5; this.isGameOver = false; this.consecutiveCorrect = 0;
                 this.startTime = Date.now();
                 this.endTime = this.startTime + (gameConfig.duration * 60000);
-                
-                // Endless State
                 this.endlessStartTime = Date.now();
                 this.currentLevel = gameConfig.level;
-
-                // Objects
-                this.trashes = [];
-                this.feedbackEffects = [];
-                this.bins = [];
-                this.activeDrags = {}; // Map touchId -> {item, dx, dy}
-                
-                // Mechanics
-                this.lastSpawnTime = 0;
-                this.spawnRate = 2000;
-                this.baseSpeed = 2;
-                
-                this.setupBins();
-                this.setDifficulty(this.currentLevel);
+                this.trashes = []; this.feedbackEffects = []; this.bins = []; this.activeDrags = {};
+                this.lastSpawnTime = 0; this.spawnRate = 2000; this.baseSpeed = 2;
+                this.setupBins(); this.setDifficulty(this.currentLevel);
             }
-
             setDifficulty(lvl) {
                 if (lvl === 1) { this.spawnRate = 2500; this.baseSpeed = 1.5; }
                 else if (lvl === 2) { this.spawnRate = 1500; this.baseSpeed = 2.5; }
                 else { this.spawnRate = 800; this.baseSpeed = 4.0 + ((lvl-3)*0.5); }
             }
-
+            adjustTime(diff) { this.endTime += diff; this.endlessStartTime += diff; }
             setupBins() {
                 this.bins = [];
-                // Dynamic padding based on width for optimization
-                let pad = Math.max(2, this.width * 0.02); // Min 2px or 2% of width
+                let pad = Math.max(2, this.width * 0.02);
                 let w = (this.width - pad*4)/3;
-                
                 this.bins.push(new Bin('organik', 'Organik', '#4ade80', pad, w));
                 this.bins.push(new Bin('anorganik', 'Anorganik', '#facc15', pad*2+w, w));
                 this.bins.push(new Bin('berbahaya', 'Berbahaya', '#ef4444', pad*3+w*2, w));
             }
-
             spawnTrash(timestamp) {
                 if (this.isGameOver) return;
-                
-                // Endless Level Up
                 if (gameConfig.mode === 'endless') {
                     let elapsedSec = Math.floor((Date.now() - this.endlessStartTime) / 1000);
                     let calcLevel = Math.floor(elapsedSec / 60) + gameConfig.level;
                     if (calcLevel > this.currentLevel) {
-                        this.currentLevel = calcLevel;
-                        this.setDifficulty(this.currentLevel);
+                        this.currentLevel = calcLevel; this.setDifficulty(this.currentLevel);
                         this.spawnFeedback('correct', "LEVEL UP!");
                     }
                 }
-
                 if (timestamp - this.lastSpawnTime > this.spawnRate) {
                     this.trashes.push(new Trash(this.width, this.baseSpeed, this.score));
                     this.lastSpawnTime = timestamp;
                 }
             }
-
             update(timestamp) {
                 if (this.isGameOver) return;
-
-                // Time Check
                 if (gameConfig.mode === 'time') {
                     let remaining = Math.max(0, this.endTime - Date.now());
                     if (remaining <= 0) this.isGameOver = true;
-                } else if (this.lives <= 0) {
-                    this.isGameOver = true;
-                }
+                } else if (this.lives <= 0) this.isGameOver = true;
 
                 this.spawnTrash(timestamp);
-
-                // Update Trashes
                 for (let i = this.trashes.length - 1; i >= 0; i--) {
                     let t = this.trashes[i];
-                    // Handle Drag Movement here
-                    if (t.draggingBy !== null) {
-                        // Position handled by input event, just rotate logic here if needed
-                    } else {
-                        t.update();
-                    }
-
-                    // Missed logic
-                    if (t.y > this.height + 50) {
-                        this.trashes.splice(i, 1);
-                        this.handleResult('miss');
-                    }
+                    if (t.draggingBy === null) t.update();
+                    if (t.y > this.height + 50) { this.trashes.splice(i, 1); this.handleResult('miss'); }
                 }
-
-                // Update Effects
                 for (let i = this.feedbackEffects.length - 1; i >= 0; i--) {
-                    let fx = this.feedbackEffects[i];
-                    fx.update();
-                    if (fx.life <= 0) this.feedbackEffects.splice(i, 1);
+                    let fx = this.feedbackEffects[i]; fx.update(); if (fx.life <= 0) this.feedbackEffects.splice(i, 1);
                 }
             }
-
             draw(ctx) {
-                ctx.save();
-                ctx.translate(this.xOffset, 0);
-
-                // Draw Separator Border if 2P
-                if (gameConfig.players === 2) {
-                    ctx.strokeStyle = '#333';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0); ctx.lineTo(0, this.height);
-                    ctx.stroke();
-                }
-
-                // Draw Bins
+                ctx.save(); ctx.translate(this.xOffset, 0);
+                if (gameConfig.players === 2) { ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, this.height); ctx.stroke(); }
                 this.bins.forEach(b => b.draw(ctx, this.height));
-
-                // Draw Trashes
                 this.trashes.forEach(t => t.draw(ctx));
-
-                // Draw Effects
                 this.feedbackEffects.forEach(f => f.draw(ctx));
-
-                // Game Over Overlay specific to player area
                 if (this.isGameOver) {
-                    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                    ctx.fillRect(0, 0, this.width, this.height);
-                    ctx.fillStyle = 'white';
-                    ctx.font = 'bold 30px Fredoka';
-                    ctx.textAlign = 'center';
+                    ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0, 0, this.width, this.height);
+                    ctx.fillStyle = 'white'; ctx.font = 'bold 30px Fredoka'; ctx.textAlign = 'center';
                     ctx.fillText("SELESAI", this.width/2, this.height/2);
-                    ctx.font = '20px Fredoka';
-                    ctx.fillText(`Skor: ${this.score}`, this.width/2, this.height/2 + 40);
+                    ctx.font = '20px Fredoka'; ctx.fillText(`Skor: ${this.score}`, this.width/2, this.height/2 + 40);
                 }
-
                 ctx.restore();
             }
-
             handleResult(res) {
                 if (this.isGameOver) return;
-                
                 if (res === 'correct') {
                     this.score += 10;
                     if (gameConfig.mode === 'endless') {
                         this.consecutiveCorrect++;
-                        if (this.consecutiveCorrect >= 5) {
-                            this.lives++; this.consecutiveCorrect = 0;
-                            this.spawnFeedback('correct', "+1 ❤️");
-                        } else {
-                            this.spawnFeedback('correct', "+10");
-                        }
-                    } else {
-                        this.spawnFeedback('correct', "+10");
-                    }
-                } else if (res === 'wrong') {
+                        if (this.consecutiveCorrect >= 5) { this.lives++; this.consecutiveCorrect = 0; this.spawnFeedback('correct', "+1 ❤️"); }
+                        else { this.spawnFeedback('correct', "+10"); }
+                    } else { this.spawnFeedback('correct', "+10"); }
+                } else {
                     this.consecutiveCorrect = 0;
-                    if (gameConfig.mode === 'time') {
-                        this.score -= 5;
-                        this.spawnFeedback('wrong', "-5");
-                    } else {
-                        this.lives--;
-                        this.spawnFeedback('wrong', "💔");
-                    }
-                } else if (res === 'miss') {
-                     this.consecutiveCorrect = 0;
-                     if (gameConfig.mode === 'time') {
-                        this.score -= 3;
-                        this.spawnFeedback('wrong', "-3");
-                    } else {
-                        this.lives--;
-                        this.spawnFeedback('wrong', "💔");
-                    }
+                    if (gameConfig.mode === 'time') { this.score -= (res === 'miss' ? 3 : 5); this.spawnFeedback('wrong', res === 'miss' ? "-3" : "-5"); }
+                    else { this.lives--; this.spawnFeedback('wrong', "💔"); }
                 }
             }
-
             spawnFeedback(type, text) {
                 this.feedbackEffects.push(new FeedbackEffect(this.width, this.height, type, text));
-                let aud = loadedAudio[type];
-                if(aud) { aud.currentTime=0; aud.play().catch(()=>{}); }
+                let aud = loadedAudio[type]; if(aud) { aud.currentTime=0; aud.play().catch(()=>{}); }
             }
-
-            // Input Handlers
             inputStart(id, localX, y) {
                 if (this.isGameOver) return;
-                // Find top trash under point
                 for (let i = this.trashes.length - 1; i >= 0; i--) {
                     let t = this.trashes[i];
-                    if (t.draggingBy !== null) continue; // Already dragged
-                    // Adaptive hit radius based on visual size
-                    let hitRadius = Math.max(t.size, 40); 
+                    if (t.draggingBy !== null) continue;
+                    let hitRadius = Math.max(t.size, 40);
                     let dist = Math.sqrt((localX - t.x)**2 + (y - t.y)**2);
-                    if (dist < hitRadius) {
-                        t.draggingBy = id;
-                        this.activeDrags[id] = t;
-                        return;
-                    }
+                    if (dist < hitRadius) { t.draggingBy = id; this.activeDrags[id] = t; return; }
                 }
             }
-
-            inputMove(id, localX, y) {
-                let t = this.activeDrags[id];
-                if (t) {
-                    t.x = localX; t.y = y;
-                }
-            }
-
+            inputMove(id, localX, y) { let t = this.activeDrags[id]; if (t) { t.x = localX; t.y = y; } }
             inputEnd(id) {
                 let t = this.activeDrags[id];
                 if (t) {
-                    t.draggingBy = null;
-                    delete this.activeDrags[id];
-                    
-                    // Check collision
+                    t.draggingBy = null; delete this.activeDrags[id];
                     let hit = false;
                     for (let b of this.bins) {
                         if (t.x > b.x && t.x < b.x+b.width && t.y > b.y && t.y < b.y+b.height) {
                             hit = true;
-                            if (t.type === b.type) this.handleResult('correct');
-                            else this.handleResult('wrong');
+                            if (t.type === b.type) this.handleResult('correct'); else this.handleResult('wrong');
                             break;
                         }
                     }
-
-                    if (hit) {
-                        let idx = this.trashes.indexOf(t);
-                        if (idx > -1) this.trashes.splice(idx, 1);
-                    }
+                    if (hit) { let idx = this.trashes.indexOf(t); if (idx > -1) this.trashes.splice(idx, 1); }
                 }
             }
         }
@@ -582,7 +608,6 @@
             draw(ctx, parentHeight) {
                 this.height = Math.min(this.width * 1.2, 130);
                 this.y = parentHeight - this.height - 20;
-                
                 let k = `bin_${this.type}_idle`;
                 let img = loadedImages[k];
                 if(img && img.complete) ctx.drawImage(img, this.x, this.y, this.width, this.height);
@@ -591,13 +616,6 @@
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                     ctx.strokeRect(this.x, this.y, this.width, this.height);
                 }
-
-                // Adaptive Label Font
-                let fontSize = Math.min(14, Math.max(10, this.width / 4));
-                ctx.fillStyle='#000'; 
-                ctx.font=`bold ${fontSize}px Fredoka`; 
-                ctx.textAlign='center';
-                ctx.fillText(this.label, this.x + this.width/2, this.y+this.height/2);
             }
         }
 
@@ -607,27 +625,19 @@
                 this.type = types[Math.floor(Math.random()*types.length)];
                 let arr = trashData[this.type];
                 this.key = arr[Math.floor(Math.random()*arr.length)];
-                
-                // Optimized size: Min 30px, Max 50px, or 22% of lane width
                 this.size = Math.floor(Math.min(50, Math.max(30, maxWidth * 0.22)));
-                
-                // Ensure spawn completely inside bounds
                 this.x = Math.random() * (maxWidth - this.size*2) + this.size;
                 this.y = -60;
                 this.speed = speedBase + (Math.random()*0.5);
-                this.angle = Math.random() * 6.28;
-                this.spin = (Math.random()-0.5)*0.1;
+                this.angle = Math.random() * 6.28; this.spin = (Math.random()-0.5)*0.1;
                 this.draggingBy = null;
             }
             update() { this.y += this.speed; this.angle += this.spin; }
             draw(ctx) {
                 let img = loadedImages[this.key];
-                ctx.save();
-                ctx.translate(this.x, this.y);
+                ctx.save(); ctx.translate(this.x, this.y);
                 if(this.draggingBy !== null) {
-                    let hand = loadedImages['hand'];
-                    // Scale hand visual
-                    let handSize = this.size * 2;
+                    let hand = loadedImages['hand']; let handSize = this.size * 2;
                     if(hand && hand.complete) ctx.drawImage(hand, -handSize/2, -handSize/2, handSize, handSize);
                     ctx.globalAlpha = 0.7;
                 }
@@ -644,31 +654,24 @@
 
         class FeedbackEffect {
             constructor(w, h, type, text) {
-                this.x = Math.random()*(w-100)+50;
-                this.y = Math.random()*(h-200)+100;
+                this.x = Math.random()*(w-100)+50; this.y = Math.random()*(h-200)+100;
                 this.type = type; this.text = text; this.life=1.0; this.scale=0.5;
             }
             update() { this.life-=0.02; this.y-=1; if(this.scale<1.0) this.scale+=0.05; }
             draw(ctx) {
-                ctx.save();
-                ctx.globalAlpha = Math.max(0, this.life);
+                ctx.save(); ctx.globalAlpha = Math.max(0, this.life);
                 let img = loadedImages[this.type];
-                if(img && img.complete) {
-                    let s = 80*this.scale;
-                    ctx.drawImage(img, this.x-s/2, this.y-s/2, s, s);
-                }
+                if(img && img.complete) { let s = 80*this.scale; ctx.drawImage(img, this.x-s/2, this.y-s/2, s, s); }
                 if(this.text) {
                     ctx.fillStyle = this.type==='correct'?'#16a34a':'#ef4444';
                     ctx.font = "bold 24px Fredoka"; ctx.textAlign="center";
-                    ctx.shadowColor="white"; ctx.shadowBlur=4;
-                    ctx.fillText(this.text, this.x, this.y+50);
+                    ctx.shadowColor="white"; ctx.shadowBlur=4; ctx.fillText(this.text, this.x, this.y+50);
                 }
                 ctx.restore();
             }
         }
 
         // --- CORE FUNCTIONS ---
-
         function showScreen(id) {
             document.querySelectorAll('.ui-overlay').forEach(el => el.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
@@ -678,8 +681,7 @@
             gameConfig.players = n;
             document.getElementById('pl-1').classList.toggle('selected', n===1);
             document.getElementById('pl-2').classList.toggle('selected', n===2);
-            if(n===2) document.getElementById('p2-warning').classList.remove('hidden');
-            else document.getElementById('p2-warning').classList.add('hidden');
+            document.getElementById('p2-warning').classList.toggle('hidden', n===1);
         }
 
         function selectMode(m) {
@@ -692,76 +694,71 @@
         function selectDuration(d) { gameConfig.duration=d; [1,2,3].forEach(i=>document.getElementById(`dur-${i}`).classList.toggle('selected',i===d)); }
 
         function resizeGame() {
-            // Apply class for CSS
             if (gameConfig.players === 2) {
-                container.classList.remove('single-player');
-                container.classList.add('two-player');
+                container.classList.remove('single-player'); container.classList.add('two-player');
                 document.getElementById('hud-layer').classList.add('two-player-mode');
             } else {
-                container.classList.add('single-player');
-                container.classList.remove('two-player');
+                container.classList.add('single-player'); container.classList.remove('two-player');
                 document.getElementById('hud-layer').classList.remove('two-player-mode');
             }
-            // Canvas resize
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
-            
-            // Re-setup bins for existing players if running
-            if (isPlaying) {
+            canvas.width = container.clientWidth; canvas.height = container.clientHeight;
+            if (isPlaying && !isPaused) {
                 let w = canvas.width / gameConfig.players;
-                players.forEach(p => {
-                    p.width = w;
-                    p.height = canvas.height;
-                    p.xOffset = p.id * w;
-                    p.setupBins();
-                });
+                players.forEach(p => { p.width = w; p.height = canvas.height; p.xOffset = p.id * w; p.setupBins(); });
             }
         }
 
         function startGame() {
-            resizeGame();
-            showScreen('game-container');
+            resizeGame(); showScreen('game-container');
             document.querySelectorAll('.ui-overlay').forEach(e=>e.classList.add('hidden'));
-
-            players = [];
-            let w = canvas.width / gameConfig.players;
-            for(let i=0; i<gameConfig.players; i++) {
-                players.push(new GameInstance(i, i*w, w, canvas.height));
-            }
-
-            isPlaying = true;
-            
-            let bgm = loadedAudio['bgm'];
-            if(bgm) { bgm.currentTime=0; bgm.play().catch(()=>{}); }
-
+            pauseBtn.classList.remove('hidden');
+            players = []; let w = canvas.width / gameConfig.players;
+            for(let i=0; i<gameConfig.players; i++) { players.push(new GameInstance(i, i*w, w, canvas.height)); }
+            isPlaying = true; isPaused = false;
+            let bgm = loadedAudio['bgm']; if(bgm) { bgm.currentTime=0; bgm.play().catch(()=>{}); }
             if(gameLoopId) cancelAnimationFrame(gameLoopId);
             gameLoopId = requestAnimationFrame(gameLoop);
         }
 
+        function togglePause() {
+            if (!isPlaying) return;
+            isPaused = !isPaused;
+            let bgm = loadedAudio['bgm'];
+            if (isPaused) {
+                pauseStartTime = Date.now(); showScreen('pause-screen');
+                pauseBtn.classList.add('hidden'); if(bgm) bgm.pause();
+            }
+        }
+
+        function resumeGame() {
+            if (!isPaused) return;
+            let diff = Date.now() - pauseStartTime;
+            players.forEach(p => p.adjustTime(diff));
+            isPaused = false; showScreen('game-container');
+            document.querySelectorAll('.ui-overlay').forEach(e=>e.classList.add('hidden'));
+            pauseBtn.classList.remove('hidden');
+            let bgm = loadedAudio['bgm']; if(bgm) bgm.play().catch(()=>{});
+        }
+
+        function quitToMenu() {
+            isPlaying = false; isPaused = false;
+            let bgm = loadedAudio['bgm']; if(bgm) { bgm.pause(); bgm.currentTime=0; }
+            showScreen('menu-screen'); pauseBtn.classList.add('hidden');
+        }
+
         function gameLoop(timestamp) {
             if(!isPlaying) return;
-
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-
-            let allOver = true;
-            players.forEach(p => {
-                p.update(timestamp);
-                p.draw(ctx);
-                if(!p.isGameOver) allOver = false;
-            });
-            
-            updateHUD();
-
-            if (allOver) {
-                setTimeout(endGame, 1000);
-                return;
+            if (!isPaused) {
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                let allOver = true;
+                players.forEach(p => { p.update(timestamp); p.draw(ctx); if(!p.isGameOver) allOver = false; });
+                updateHUD();
+                if (allOver) { setTimeout(endGame, 1000); return; }
             }
-
             gameLoopId = requestAnimationFrame(gameLoop);
         }
 
         function updateHUD() {
-            // P1
             document.getElementById('p1-score').innerText = `P1 Skor: ${players[0].score}`;
             if(gameConfig.mode==='time') {
                  let rem = Math.max(0, players[0].endTime - Date.now());
@@ -770,97 +767,72 @@
                  document.getElementById('p1-stat').innerText = `❤️ ${players[0].lives}`;
                  document.getElementById('p1-level').innerText = `Lv.${players[0].currentLevel}`;
             }
-
-            // P2
             if (players[1]) {
                 document.getElementById('p2-score').innerText = `P2 Skor: ${players[1].score}`;
                 if(gameConfig.mode==='time') {
                      let rem = Math.max(0, players[1].endTime - Date.now());
                      document.getElementById('p2-stat').innerText = `⏳ ${Math.ceil(rem/1000)}`;
-                } else {
-                     document.getElementById('p2-stat').innerText = `❤️ ${players[1].lives}`;
-                }
+                } else { document.getElementById('p2-stat').innerText = `❤️ ${players[1].lives}`; }
             }
         }
 
         function endGame() {
             isPlaying = false;
-            let bgm = loadedAudio['bgm'];
-            if(bgm) bgm.pause();
+            let bgm = loadedAudio['bgm']; if(bgm) bgm.pause();
+            pauseBtn.classList.add('hidden');
+            
+            // Show Inputs based on Players
+            document.getElementById('save-score-container').classList.remove('hidden');
+            document.getElementById('input-p1').value = '';
+            document.getElementById('input-p2').value = '';
+            
+            if (gameConfig.players === 1) {
+                document.getElementById('input-p2-container').classList.add('hidden');
+                document.getElementById('input-p1').placeholder = "Masukkan Nama Kamu";
+            } else {
+                document.getElementById('input-p2-container').classList.remove('hidden');
+                document.getElementById('input-p1').placeholder = "Nama Pemain 1";
+                document.getElementById('input-p2').placeholder = "Nama Pemain 2";
+            }
 
             let resHtml = "";
             if (gameConfig.players === 1) {
-                resHtml = `<div class="bg-blue-100 p-4 rounded-lg text-center">
-                    <p class="text-lg font-bold">Skor Kamu</p>
-                    <p class="text-4xl font-bold text-green-600">${players[0].score}</p>
-                </div>`;
+                resHtml = `<div class="bg-blue-100 p-4 rounded-lg text-center"><p class="text-lg font-bold">Skor Kamu</p><p class="text-4xl font-bold text-green-600">${players[0].score}</p></div>`;
             } else {
-                let p1 = players[0].score;
-                let p2 = players[1].score;
+                let p1 = players[0].score; let p2 = players[1].score;
                 let winText = p1 > p2 ? "🏆 Pemain 1 Menang!" : (p2 > p1 ? "🏆 Pemain 2 Menang!" : "🤝 Seri!");
-                resHtml = `
-                <h3 class="text-2xl font-bold text-center text-purple-600 mb-2">${winText}</h3>
-                <div class="flex gap-4 w-full">
-                    <div class="flex-1 bg-blue-100 p-4 rounded-lg text-center">
-                        <p class="font-bold">Pemain 1</p>
-                        <p class="text-3xl text-green-600">${p1}</p>
-                    </div>
-                    <div class="flex-1 bg-purple-100 p-4 rounded-lg text-center">
-                        <p class="font-bold">Pemain 2</p>
-                        <p class="text-3xl text-green-600">${p2}</p>
-                    </div>
-                </div>`;
+                resHtml = `<h3 class="text-2xl font-bold text-center text-purple-600 mb-2">${winText}</h3><div class="flex gap-4 w-full"><div class="flex-1 bg-blue-100 p-4 rounded-lg text-center"><p class="font-bold">Pemain 1</p><p class="text-3xl text-green-600">${p1}</p></div><div class="flex-1 bg-purple-100 p-4 rounded-lg text-center"><p class="font-bold">Pemain 2</p><p class="text-3xl text-green-600">${p2}</p></div></div>`;
             }
-
             document.getElementById('go-results').innerHTML = resHtml;
             showScreen('game-over-screen');
         }
 
-        // --- INPUT HANDLING (Multitouch Support) ---
         function handleInput(e, type) {
-            if(!isPlaying) return;
+            if(!isPlaying || isPaused) return;
             e.preventDefault();
-            
             const touches = e.changedTouches ? Array.from(e.changedTouches) : [{identifier: 'mouse', clientX: e.clientX, clientY: e.clientY}];
             const rect = canvas.getBoundingClientRect();
-
             touches.forEach(t => {
-                let gx = t.clientX - rect.left;
-                let gy = t.clientY - rect.top;
-                
-                // Determine Player based on X
-                let pIdx = 0;
-                let pWidth = canvas.width / gameConfig.players;
+                let gx = t.clientX - rect.left; let gy = t.clientY - rect.top;
+                let pIdx = 0; let pWidth = canvas.width / gameConfig.players;
                 if (gameConfig.players === 2 && gx > pWidth) pIdx = 1;
-
-                let localX = gx - (pIdx * pWidth);
-                let player = players[pIdx];
-
+                let localX = gx - (pIdx * pWidth); let player = players[pIdx];
                 if (type === 'start') player.inputStart(t.identifier, localX, gy);
                 else if (type === 'move') player.inputMove(t.identifier, localX, gy);
                 else if (type === 'end') player.inputEnd(t.identifier);
             });
         }
 
-        // Listeners
         canvas.addEventListener('mousedown', e => handleInput(e, 'start'));
         canvas.addEventListener('mousemove', e => handleInput(e, 'move'));
         window.addEventListener('mouseup', e => handleInput(e, 'end'));
-        
         canvas.addEventListener('touchstart', e => handleInput(e, 'start'), {passive:false});
         canvas.addEventListener('touchmove', e => handleInput(e, 'move'), {passive:false});
         window.addEventListener('touchend', e => handleInput(e, 'end'));
+        window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(resizeGame, 100); });
         
-        window.addEventListener('resize', () => {
-             // Debounce resize
-             clearTimeout(window.resizeTimer);
-             window.resizeTimer = setTimeout(resizeGame, 100);
-        });
-
-        // Init
         document.getElementById('game-container').style.backgroundImage = `url('${assetConfig.background}')`;
         showScreen('menu-screen');
-
     </script>
 </body>
 </html>
