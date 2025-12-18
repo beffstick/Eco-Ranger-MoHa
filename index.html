@@ -187,7 +187,9 @@
                     <button id="pl-1" onclick="selectPlayers(1)" class="btn btn-primary flex-1 py-2 text-sm selected">👤 1 Player</button>
                     <button id="pl-2" onclick="selectPlayers(2)" class="btn btn-purple flex-1 py-2 text-sm">👥 2 Players</button>
                 </div>
-                <p id="p2-warning" class="hidden text-xs text-red-500 text-center mt-1 font-bold">⚠️ Mode 2 Player memerlukan layar lebar (Tablet/TV).</p>
+                <p id="p2-warning" class="hidden text-xs text-orange-600 bg-orange-100 p-2 rounded text-center mt-2 border border-orange-200">
+                    <strong>Tips:</strong> Mode 2 Player telah dioptimalkan untuk semua layar, namun akan lebih nyaman dan seru jika dimainkan di layar lebar (Tablet/TV).
+                </p>
             </div>
 
             <!-- Mode Toggle -->
@@ -374,8 +376,10 @@
 
             setupBins() {
                 this.bins = [];
-                let pad = 10;
+                // Dynamic padding based on width for optimization
+                let pad = Math.max(2, this.width * 0.02); // Min 2px or 2% of width
                 let w = (this.width - pad*4)/3;
+                
                 this.bins.push(new Bin('organik', 'Organik', '#4ade80', pad, w));
                 this.bins.push(new Bin('anorganik', 'Anorganik', '#facc15', pad*2+w, w));
                 this.bins.push(new Bin('berbahaya', 'Berbahaya', '#ef4444', pad*3+w*2, w));
@@ -526,8 +530,10 @@
                 for (let i = this.trashes.length - 1; i >= 0; i--) {
                     let t = this.trashes[i];
                     if (t.draggingBy !== null) continue; // Already dragged
+                    // Adaptive hit radius based on visual size
+                    let hitRadius = Math.max(t.size, 40); 
                     let dist = Math.sqrt((localX - t.x)**2 + (y - t.y)**2);
-                    if (dist < 50) {
+                    if (dist < hitRadius) {
                         t.draggingBy = id;
                         this.activeDrags[id] = t;
                         return;
@@ -577,7 +583,7 @@
                 this.height = Math.min(this.width * 1.2, 130);
                 this.y = parentHeight - this.height - 20;
                 
-                let k = `bin_${this.type}_idle`; // Simplify, no hover visual for now
+                let k = `bin_${this.type}_idle`;
                 let img = loadedImages[k];
                 if(img && img.complete) ctx.drawImage(img, this.x, this.y, this.width, this.height);
                 else {
@@ -585,6 +591,13 @@
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                     ctx.strokeRect(this.x, this.y, this.width, this.height);
                 }
+
+                // Adaptive Label Font
+                let fontSize = Math.min(14, Math.max(10, this.width / 4));
+                ctx.fillStyle='#000'; 
+                ctx.font=`bold ${fontSize}px Fredoka`; 
+                ctx.textAlign='center';
+                ctx.fillText(this.label, this.x + this.width/2, this.y+this.height/2);
             }
         }
 
@@ -595,7 +608,10 @@
                 let arr = trashData[this.type];
                 this.key = arr[Math.floor(Math.random()*arr.length)];
                 
-                this.size = 50;
+                // Optimized size: Min 30px, Max 50px, or 22% of lane width
+                this.size = Math.floor(Math.min(50, Math.max(30, maxWidth * 0.22)));
+                
+                // Ensure spawn completely inside bounds
                 this.x = Math.random() * (maxWidth - this.size*2) + this.size;
                 this.y = -60;
                 this.speed = speedBase + (Math.random()*0.5);
@@ -610,7 +626,9 @@
                 ctx.translate(this.x, this.y);
                 if(this.draggingBy !== null) {
                     let hand = loadedImages['hand'];
-                    if(hand && hand.complete) ctx.drawImage(hand, -50, -50, 100, 100);
+                    // Scale hand visual
+                    let handSize = this.size * 2;
+                    if(hand && hand.complete) ctx.drawImage(hand, -handSize/2, -handSize/2, handSize, handSize);
                     ctx.globalAlpha = 0.7;
                 }
                 ctx.rotate(this.angle);
