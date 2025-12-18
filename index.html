@@ -245,6 +245,7 @@
         }
 
         // Load Images
+        preloadImage('hand', assetConfig.hand); // PRELOAD TANGAN UNTUK IN-GAME
         preloadImage('correct', assetConfig.feedback.correct);
         preloadImage('wrong', assetConfig.feedback.wrong);
         preloadImage('bin_organik_idle', assetConfig.bins.organik.idle);
@@ -387,6 +388,16 @@
                 ctx.textBaseline = 'middle';
                 
                 if (this.isDragging) {
+                    // --- GAMBAR TANGAN ROBOT DI BELAKANG SAMPAH ---
+                    const handImg = loadedImages['hand'];
+                    if (handImg && handImg.complete && handImg.naturalHeight !== 0) {
+                        const hw = 100; // Ukuran tangan agak besar dari sampah
+                        const hh = 100 * (handImg.naturalHeight / handImg.naturalWidth);
+                        // Gambar tangan centered di posisi sampah
+                        ctx.drawImage(handImg, this.x - hw/2, this.y - hh/2, hw, hh);
+                    }
+
+                    // Shadow/Effect scale saat drag (Existing)
                     ctx.globalAlpha = 0.5;
                     ctx.beginPath();
                     ctx.arc(this.x, this.y + 10, this.size/2, 0, Math.PI * 2);
