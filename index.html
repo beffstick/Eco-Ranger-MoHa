@@ -21,7 +21,11 @@
             max-width: 600px;
             margin: 0 auto;
             height: 100vh;
+            /* Fallback gradient jika background.jpg belum ada */
             background: linear-gradient(180deg, #bae6fd 0%, #f0f9ff 100%);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             overflow: hidden;
         }
@@ -183,48 +187,50 @@
     </div>
 
     <script>
-        // --- KONFIGURASI ASET (GANTI URL DI SINI) ---
-        // Path aset disesuaikan dengan root folder (tanpa 'assets/')
+        // --- KONFIGURASI ASET ---
         const assetConfig = {
-            logo: 'logo.png', // Logo Game (Kembali ke PNG)
-            hand: 'tangan.png', // Gambar Tangan Tutorial (Kembali ke PNG)
+            background: 'background.jpg', // Background Game (BARU)
+            logo: 'logo.png',
+            hand: 'tangan.png',
             feedback: {
-                correct: 'benar.png', // Emote Benar (Kembali ke PNG)
-                wrong: 'salah.png'    // Emote Salah (Kembali ke PNG)
+                correct: 'benar.png',
+                wrong: 'salah.png'
             },
             audio: {
-                correct: 'benar.ogg', // Suara Benar
-                wrong: 'salah.ogg',    // Suara Salah
-                bgm: 'bgmusic.ogg'     // Background Music
+                correct: 'benar.ogg',
+                wrong: 'salah.ogg',
+                bgm: 'bgmusic.ogg'
             },
             bins: {
                 organik: {
-                    idle: 'organik_1.png',   // (Kembali ke PNG)
-                    active: 'organik_2.png', // (Kembali ke PNG)
+                    idle: 'organik_1.png',
+                    active: 'organik_2.png',
                     color: '#4ade80' 
                 },
                 anorganik: {
-                    idle: 'anorganik_1.png',   // (Kembali ke PNG)
-                    active: 'anorganik_2.png', // (Kembali ke PNG)
+                    idle: 'anorganik_1.png',
+                    active: 'anorganik_2.png',
                     color: '#facc15'
                 },
-                b3: {
-                    idle: 'berbahaya_1.png',   // (Kembali ke PNG)
-                    active: 'berbahaya_2.png', // (Kembali ke PNG)
+                berbahaya: {
+                    idle: 'berbahaya_1.png',
+                    active: 'berbahaya_2.png',
                     color: '#ef4444'
                 }
             }
         };
 
-        // --- Setup Awal ---
-        // Update gambar di HTML Start Screen agar sesuai config
+        // --- Setup Background ---
+        document.getElementById('game-container').style.backgroundImage = `url('${assetConfig.background}')`;
+
+        // --- Setup Awal UI ---
         document.getElementById('logo-display').src = assetConfig.logo;
         document.getElementById('hand-tutorial').src = assetConfig.hand;
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
-        // Screens
+        // Screens & HUD
         const startScreen = document.getElementById('start-screen');
         const gameOverScreen = document.getElementById('game-over-screen');
         const scoreValEl = document.getElementById('score-val');
@@ -236,7 +242,7 @@
         document.getElementById('start-btn').addEventListener('click', startGame);
         document.getElementById('restart-btn').addEventListener('click', startGame);
 
-        // Preload Images Helper
+        // --- PRELOAD SYSTEM ---
         const loadedImages = {};
         function preloadImage(key, src) {
             const img = new Image();
@@ -244,16 +250,41 @@
             loadedImages[key] = img;
         }
 
-        // Load Images
-        preloadImage('hand', assetConfig.hand); // PRELOAD TANGAN UNTUK IN-GAME
+        // 1. Preload UI & Bins
+        preloadImage('hand', assetConfig.hand);
         preloadImage('correct', assetConfig.feedback.correct);
         preloadImage('wrong', assetConfig.feedback.wrong);
         preloadImage('bin_organik_idle', assetConfig.bins.organik.idle);
         preloadImage('bin_organik_active', assetConfig.bins.organik.active);
         preloadImage('bin_anorganik_idle', assetConfig.bins.anorganik.idle);
         preloadImage('bin_anorganik_active', assetConfig.bins.anorganik.active);
-        preloadImage('bin_b3_idle', assetConfig.bins.b3.idle);
-        preloadImage('bin_b3_active', assetConfig.bins.b3.active);
+        preloadImage('bin_berbahaya_idle', assetConfig.bins.berbahaya.idle);
+        preloadImage('bin_berbahaya_active', assetConfig.bins.berbahaya.active);
+
+        // 2. Preload Sampah (1-10 untuk tiap kategori)
+        const trashData = {
+            organik: [],
+            anorganik: [],
+            berbahaya: []
+        };
+
+        function generateAndPreloadTrash(type, prefix) {
+            for (let i = 1; i <= 10; i++) {
+                const filename = `${prefix}_${i}.png`; // Format nama file
+                const key = `${type}_${i}`;
+                
+                // Simpan key ke trashData agar bisa dipilih random nanti
+                trashData[type].push(key);
+                
+                // Load gambar
+                preloadImage(key, filename);
+            }
+        }
+
+        // Generate data sampah: sampah_organik_1 s/d 10, dll.
+        generateAndPreloadTrash('organik', 'sampah_organik');
+        generateAndPreloadTrash('anorganik', 'sampah_anorganik');
+        generateAndPreloadTrash('berbahaya', 'sampah_berbahaya'); // 'berbahaya' sesuai request
 
         // --- AUDIO SYSTEM ---
         const loadedAudio = {};
@@ -265,19 +296,13 @@
         
         preloadAudio('correct', assetConfig.audio.correct);
         preloadAudio('wrong', assetConfig.audio.wrong);
-        preloadAudio('bgm', assetConfig.audio.bgm, true); // Load BGM dengan loop=true
+        preloadAudio('bgm', assetConfig.audio.bgm, true);
 
         function playSound(key) {
             const audio = loadedAudio[key];
             if (audio) {
-                // Jangan reset bgm jika sedang main
-                if (key !== 'bgm') {
-                    audio.currentTime = 0;
-                }
-                
-                audio.play().catch(e => {
-                    console.log("Audio play failed:", e);
-                });
+                if (key !== 'bgm') audio.currentTime = 0;
+                audio.play().catch(e => console.log("Audio play failed:", e));
             }
         }
 
@@ -298,13 +323,6 @@
         let lastSpawnTime = 0;
         let baseSpeed = 2;
         let highScore = localStorage.getItem('ecoRangerHighScore') || 0;
-
-        // Data Sampah
-        const trashData = {
-            organik: ['🍎', '🍌', '🍂', '🦴', '🍞', '🥀', '🥚', '🥦'],
-            anorganik: ['🥤', '📰', '📦', '🧴', '🥫', '🥡', '👕', '💿'],
-            b3: ['🔋', '💉', '💊', '🧪', '🔦', '☠️', '🪫', '🌡️']
-        };
 
         // Objek Game
         let trashes = [];
@@ -330,7 +348,7 @@
                 this.fallbackColor = fallbackColor;
                 this.x = x;
                 this.width = width;
-                this.height = width * 1.2; // Rasio tinggi gambar
+                this.height = width * 1.2;
                 if (this.height > 150) this.height = 150;
                 
                 this.y = canvas.height - this.height - 20; 
@@ -344,6 +362,7 @@
                 if (img && img.complete && img.naturalHeight !== 0) {
                     ctx.drawImage(img, this.x, this.y, this.width, this.height);
                 } else {
+                    // Fallback
                     ctx.fillStyle = this.fallbackColor;
                     if (this.isHovered) ctx.fillStyle = '#ffffff'; 
                     ctx.beginPath();
@@ -363,15 +382,17 @@
 
         class Trash {
             constructor() {
+                // 1. Pilih tipe acak (organik/anorganik/b3)
                 const types = Object.keys(trashData);
                 this.type = types[Math.floor(Math.random() * types.length)];
                 
-                const emojis = trashData[this.type];
-                this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                // 2. Pilih salah satu key gambar dari array tipe tersebut (misal: organik_3)
+                const availableKeys = trashData[this.type];
+                this.imgKey = availableKeys[Math.floor(Math.random() * availableKeys.length)];
 
-                this.size = 40;
+                this.size = 50; // Sedikit diperbesar untuk gambar
                 this.x = Math.random() * (canvas.width - this.size * 2) + this.size;
-                this.y = -50;
+                this.y = -60;
                 this.speed = baseSpeed + (Math.random() * 0.5) + (score / 100);
                 this.isDragging = false;
             }
@@ -383,31 +404,41 @@
             }
 
             draw() {
-                ctx.font = `${this.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
+                // Ambil gambar berdasarkan key
+                const img = loadedImages[this.imgKey];
+
+                // Jika sedang di drag, gambar tangan robot dulu di belakangnya
                 if (this.isDragging) {
-                    // --- GAMBAR TANGAN ROBOT DI BELAKANG SAMPAH ---
                     const handImg = loadedImages['hand'];
                     if (handImg && handImg.complete && handImg.naturalHeight !== 0) {
-                        const hw = 100; // Ukuran tangan agak besar dari sampah
+                        const hw = 100; 
                         const hh = 100 * (handImg.naturalHeight / handImg.naturalWidth);
-                        // Gambar tangan centered di posisi sampah
                         ctx.drawImage(handImg, this.x - hw/2, this.y - hh/2, hw, hh);
                     }
-
-                    // Shadow/Effect scale saat drag (Existing)
-                    ctx.globalAlpha = 0.5;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y + 10, this.size/2, 0, Math.PI * 2);
-                    ctx.fillStyle = 'black';
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
-                    ctx.font = `${this.size * 1.2}px Arial`;
+                    
+                    // Efek bayangan saat drag
+                    ctx.globalAlpha = 0.6;
                 }
 
-                ctx.fillText(this.emoji, this.x, this.y);
+                if (img && img.complete && img.naturalHeight !== 0) {
+                    // Gambar Trash
+                    const drawSize = this.isDragging ? this.size * 1.2 : this.size;
+                    const offsetX = drawSize / 2;
+                    const offsetY = drawSize / 2;
+                    ctx.drawImage(img, this.x - offsetX, this.y - offsetY, drawSize, drawSize);
+                } else {
+                    // Fallback jika gambar sampah belum load (Lingkaran warna)
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size/2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.type === 'organik' ? 'green' : (this.type === 'anorganik' ? 'yellow' : 'red');
+                    ctx.fill();
+                    ctx.fillStyle = 'black';
+                    ctx.textAlign = 'center';
+                    ctx.font = '12px Arial';
+                    ctx.fillText("?", this.x, this.y);
+                }
+
+                ctx.globalAlpha = 1.0;
             }
         }
 
@@ -453,7 +484,7 @@
 
             bins.push(new Bin('organik', 'Organik', assetConfig.bins.organik.color, padding, binWidth));
             bins.push(new Bin('anorganik', 'Non-Org', assetConfig.bins.anorganik.color, padding * 2 + binWidth, binWidth));
-            bins.push(new Bin('b3', 'B3', assetConfig.bins.b3.color, padding * 3 + binWidth * 2, binWidth));
+            bins.push(new Bin('berbahaya', 'Berbahaya', assetConfig.bins.berbahaya.color, padding * 3 + binWidth * 2, binWidth));
         }
 
         function spawnTrash(timestamp) {
@@ -465,6 +496,7 @@
         }
 
         function checkCollision(trash, bin) {
+            // Hitbox sederhana
             return (
                 trash.x > bin.x &&
                 trash.x < bin.x + bin.width &&
@@ -475,7 +507,6 @@
 
         function spawnFeedback(type) {
             feedbackEffects.push(new FeedbackEffect(type));
-            // Mainkan suara sesuai feedback
             if (type === 'correct') playSound('correct');
             else playSound('wrong');
         }
@@ -504,11 +535,11 @@
                 t.draw();
 
                 // Miss (Jatuh ke bawah)
-                if (t.y > canvas.height + 20) {
+                if (t.y > canvas.height + 40) {
                     trashes.splice(i, 1);
                     lives--;
                     updateUI();
-                    spawnFeedback('wrong'); // Mainkan suara salah
+                    spawnFeedback('wrong');
                     if (lives <= 0) endGame();
                 }
             }
@@ -541,6 +572,7 @@
             
             for (let i = trashes.length - 1; i >= 0; i--) {
                 let t = trashes[i];
+                // Distance check circle collision
                 const dist = Math.sqrt((pos.x - t.x) ** 2 + (pos.y - t.y) ** 2);
                 if (dist < 40) {
                     dragItem = t;
@@ -567,11 +599,9 @@
                 if (checkCollision(dragItem, bin)) {
                     droppedInBin = true;
                     if (dragItem.type === bin.type) {
-                        // BENAR
                         score += 10;
                         spawnFeedback('correct'); 
                     } else {
-                        // SALAH
                         lives--;
                         spawnFeedback('wrong'); 
                     }
@@ -618,7 +648,6 @@
             resizeCanvas();
             updateUI();
             
-            // Start Background Music
             playSound('bgm');
 
             lastSpawnTime = performance.now();
@@ -629,8 +658,6 @@
         function endGame() {
             isPlaying = false;
             cancelAnimationFrame(gameLoopId);
-            
-            // Stop Background Music
             stopSound('bgm');
 
             if (score > highScore) {
