@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eco Ranger: Ultimate</title>
+    <title>Eco Ranger: Ultimate (4K Ready)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+
+        :root {
+            --ui-scale: 1;
+        }
+
+        /* 4K / Large Screen Optimization */
+        @media (min-width: 2100px) {
+            :root {
+                --ui-scale: 2.5; /* Scale up UI by 2.5x for 4K screens */
+            }
+            html { font-size: 32px; } /* Base font increase */
+        }
 
         body {
             font-family: 'Fredoka', sans-serif;
@@ -33,9 +45,14 @@
         }
 
         #game-container.single-player {
-            max-width: 600px; 
+            /* On 4K, give single player more room but keep it centered */
+            max-width: 800px; 
             border-left: 1px solid #ccc;
             border-right: 1px solid #ccc;
+        }
+        
+        @media (min-width: 2100px) {
+            #game-container.single-player { max-width: 1400px; }
         }
 
         #game-container.two-player {
@@ -72,43 +89,42 @@
         /* Buttons */
         .btn {
             width: 100%;
-            max-width: 300px;
-            margin: 6px 0;
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-size: 1.1rem;
+            max-width: calc(300px * var(--ui-scale));
+            margin: calc(6px * var(--ui-scale)) 0;
+            padding: calc(10px * var(--ui-scale)) calc(20px * var(--ui-scale));
+            border-radius: calc(15px * var(--ui-scale));
+            font-size: calc(1.1rem * var(--ui-scale));
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.1s, filter 0.2s;
             text-align: center;
-            border: 3px solid rgba(0,0,0,0.1);
+            border: calc(3px * var(--ui-scale)) solid rgba(0,0,0,0.1);
             position: relative;
             white-space: nowrap;
         }
 
         .btn:active { transform: scale(0.98); }
-        .btn-primary { background: #0ea5e9; color: white; border-bottom: 5px solid #0284c7; }
-        .btn-success { background: #22c55e; color: white; border-bottom: 5px solid #15803d; }
-        .btn-warning { background: #f59e0b; color: white; border-bottom: 5px solid #b45309; }
-        .btn-danger { background: #ef4444; color: white; border-bottom: 5px solid #b91c1c; }
-        .btn-purple { background: #8b5cf6; color: white; border-bottom: 5px solid #6d28d9; }
-        .btn-secondary { background: #64748b; color: white; border-bottom: 5px solid #475569; }
-
+        .btn-primary { background: #0ea5e9; color: white; border-bottom-color: #0284c7; border-bottom-width: calc(5px * var(--ui-scale)); }
+        .btn-success { background: #22c55e; color: white; border-bottom-color: #15803d; border-bottom-width: calc(5px * var(--ui-scale)); }
+        .btn-warning { background: #f59e0b; color: white; border-bottom-color: #b45309; border-bottom-width: calc(5px * var(--ui-scale)); }
+        .btn-danger { background: #ef4444; color: white; border-bottom-color: #b91c1c; border-bottom-width: calc(5px * var(--ui-scale)); }
+        .btn-purple { background: #8b5cf6; color: white; border-bottom-color: #6d28d9; border-bottom-width: calc(5px * var(--ui-scale)); }
+        
         .btn.selected {
-            border: 3px solid #000;
+            border: calc(3px * var(--ui-scale)) solid #000;
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            box-shadow: 0 0 calc(15px * var(--ui-scale)) rgba(0,0,0,0.2);
         }
 
         /* Inputs */
         .input-field {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            padding: calc(10px * var(--ui-scale));
+            border: calc(2px * var(--ui-scale)) solid #cbd5e1;
+            border-radius: calc(10px * var(--ui-scale));
+            margin-bottom: calc(10px * var(--ui-scale));
             font-family: 'Fredoka', sans-serif;
-            font-size: 1rem;
+            font-size: calc(1rem * var(--ui-scale));
             text-align: center;
         }
         .input-field:focus { outline: none; border-color: #0ea5e9; }
@@ -116,21 +132,21 @@
         /* Pause Button */
         #pause-btn {
             position: absolute;
-            top: 10px;
+            top: calc(10px * var(--ui-scale));
             left: 50%;
             transform: translateX(-50%);
             z-index: 30;
             background: white;
-            border: 2px solid #333;
+            border: calc(2px * var(--ui-scale)) solid #333;
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
+            width: calc(45px * var(--ui-scale));
+            height: calc(45px * var(--ui-scale));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: calc(1.5rem * var(--ui-scale));
             cursor: pointer;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            box-shadow: 0 calc(4px * var(--ui-scale)) 0 rgba(0,0,0,0.2);
             transition: transform 0.1s;
         }
         #pause-btn:active { transform: translateX(-50%) translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
@@ -138,36 +154,69 @@
         /* HUD */
         .hud-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         .hud-panel {
-            position: absolute; top: 10px; background: rgba(255, 255, 255, 0.9);
-            padding: 6px 12px; border-radius: 8px; border: 2px solid #333;
-            font-size: 1rem; font-weight: bold; box-shadow: 2px 2px 0 rgba(0,0,0,0.2); white-space: nowrap;
+            position: absolute; 
+            top: calc(10px * var(--ui-scale)); 
+            background: rgba(255, 255, 255, 0.9);
+            padding: calc(6px * var(--ui-scale)) calc(12px * var(--ui-scale)); 
+            border-radius: calc(8px * var(--ui-scale)); 
+            border: calc(2px * var(--ui-scale)) solid #333;
+            font-size: calc(1rem * var(--ui-scale)); 
+            font-weight: bold; 
+            box-shadow: calc(2px * var(--ui-scale)) calc(2px * var(--ui-scale)) 0 rgba(0,0,0,0.2); 
+            white-space: nowrap;
         }
-        .p1-hud.score { left: 10px; color: #16a34a; }
-        .p1-hud.stat { right: 10px; color: #ef4444; }
-        .p1-hud.center { left: 50%; transform: translateX(-50%); top: 60px; font-size: 0.8rem; }
+        .p1-hud.score { left: calc(10px * var(--ui-scale)); color: #16a34a; }
+        .p1-hud.stat { right: calc(10px * var(--ui-scale)); color: #ef4444; }
+        .p1-hud.center { left: 50%; transform: translateX(-50%); top: calc(60px * var(--ui-scale)); font-size: calc(0.8rem * var(--ui-scale)); }
         .p2-hud { display: none; }
         .two-player-mode .p1-hud.stat { right: 52%; }
         .two-player-mode .p2-hud { display: block; }
         .two-player-mode .p2-hud.score { left: 52%; color: #16a34a; }
-        .two-player-mode .p2-hud.stat { right: 10px; color: #ef4444; }
+        .two-player-mode .p2-hud.stat { right: calc(10px * var(--ui-scale)); color: #ef4444; }
 
         .card {
-            background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px;
-            border: 2px solid #eee; width: 100%; max-width: 400px;
-            display: flex; align-items: center; gap: 15px;
+            background: white; 
+            border-radius: calc(12px * var(--ui-scale)); 
+            padding: calc(15px * var(--ui-scale)); 
+            margin-bottom: calc(10px * var(--ui-scale));
+            border: calc(2px * var(--ui-scale)) solid #eee; 
+            width: 100%; 
+            max-width: calc(400px * var(--ui-scale));
+            display: flex; align-items: center; gap: calc(15px * var(--ui-scale));
         }
-        .logo-img { height: 80px; margin-bottom: 10px; }
+        .logo-img { height: calc(80px * var(--ui-scale)); margin-bottom: calc(10px * var(--ui-scale)); }
 
         /* Leaderboard Styles */
-        .tab-container { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 400px; }
-        .tab-btn { flex: 1; padding: 8px; border-radius: 8px; background: #e2e8f0; font-weight: bold; color: #64748b; cursor: pointer; }
+        .tab-container { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; max-width: calc(400px * var(--ui-scale)); }
+        .tab-btn { flex: 1; padding: calc(8px * var(--ui-scale)); border-radius: 8px; background: #e2e8f0; font-weight: bold; color: #64748b; cursor: pointer; }
         .tab-btn.active { background: #0ea5e9; color: white; }
-        .lb-list { width: 100%; max-width: 400px; background: white; border-radius: 12px; padding: 10px; max-height: 300px; overflow-y: auto; border: 2px solid #e2e8f0; }
-        .lb-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .lb-list { width: 100%; max-width: calc(400px * var(--ui-scale)); background: white; border-radius: 12px; padding: 10px; max-height: 40vh; overflow-y: auto; border: 2px solid #e2e8f0; }
+        .lb-item { display: flex; justify-content: space-between; padding: calc(8px * var(--ui-scale)); border-bottom: 1px solid #f1f5f9; font-size: calc(0.9rem * var(--ui-scale)); }
         .lb-item:last-child { border-bottom: none; }
-        .lb-rank { font-weight: bold; color: #0ea5e9; width: 30px; }
+        .lb-rank { font-weight: bold; color: #0ea5e9; width: calc(30px * var(--ui-scale)); }
         .lb-name { flex: 1; text-align: left; font-weight: 600; color: #334155; }
         .lb-score { font-weight: bold; color: #16a34a; }
+        
+        .header-bg {
+            background-color: #f1f5f9;
+            padding: calc(8px * var(--ui-scale));
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            width: 100%;
+            max-width: calc(400px * var(--ui-scale));
+            display: flex;
+            font-size: calc(0.75rem * var(--ui-scale));
+            font-weight: 700;
+            color: #64748b;
+        }
+        
+        /* Flex Wrappers */
+        .flex-gap-responsive { gap: calc(0.5rem * var(--ui-scale)); }
+        .mb-responsive { margin-bottom: calc(0.75rem * var(--ui-scale)); }
+        .text-xl-responsive { font-size: calc(1.25rem * var(--ui-scale)); line-height: 1.75rem; }
+        .text-3xl-responsive { font-size: calc(1.875rem * var(--ui-scale)); line-height: 2.25rem; }
+        .max-w-sm-responsive { max-width: calc(24rem * var(--ui-scale)); }
+        .max-w-md-responsive { max-width: calc(28rem * var(--ui-scale)); }
     </style>
 </head>
 <body>
@@ -188,8 +237,8 @@
         <!-- 1. MAIN MENU -->
         <div id="menu-screen" class="ui-overlay">
             <img src="assets/logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/150?text=Eco+Ranger'">
-            <h1 class="text-4xl font-bold text-slate-800 mb-2">Eco Ranger</h1>
-            <p class="text-sm text-slate-500 mb-6 font-bold">EDUKASI PILAH SAMPAH</p>
+            <h1 class="text-3xl-responsive font-bold text-slate-800 mb-2">Eco Ranger</h1>
+            <p class="text-sm text-slate-500 mb-6 font-bold" style="font-size: calc(0.875rem * var(--ui-scale))">EDUKASI PILAH SAMPAH</p>
             
             <button onclick="showScreen('setup-screen')" class="btn btn-primary">🎮 Mulai Main</button>
             <button onclick="showLeaderboard()" class="btn btn-purple">🏆 Leaderboard</button>
@@ -199,41 +248,41 @@
 
         <!-- 2. SETUP SCREEN -->
         <div id="setup-screen" class="ui-overlay hidden">
-            <h2 class="text-xl font-bold text-slate-700 mb-2">Setup Permainan</h2>
-            <div class="w-full max-w-sm mb-3">
-                <p class="text-xs font-bold text-slate-400 mb-1">Jumlah Pemain:</p>
-                <div class="flex gap-2">
-                    <button id="pl-1" onclick="selectPlayers(1)" class="btn btn-primary flex-1 py-2 text-sm selected">👤 1 Player</button>
-                    <button id="pl-2" onclick="selectPlayers(2)" class="btn btn-purple flex-1 py-2 text-sm">👥 2 Players</button>
+            <h2 class="text-xl-responsive font-bold text-slate-700 mb-2">Setup Permainan</h2>
+            <div class="w-full max-w-sm-responsive mb-responsive">
+                <p class="text-xs font-bold text-slate-400 mb-1" style="font-size: calc(0.75rem * var(--ui-scale))">Jumlah Pemain:</p>
+                <div class="flex flex-gap-responsive">
+                    <button id="pl-1" onclick="selectPlayers(1)" class="btn btn-primary flex-1 py-2 selected">👤 1 Player</button>
+                    <button id="pl-2" onclick="selectPlayers(2)" class="btn btn-purple flex-1 py-2">👥 2 Players</button>
                 </div>
-                <p id="p2-warning" class="hidden text-xs text-orange-600 bg-orange-100 p-2 rounded text-center mt-2 border border-orange-200">
-                    <strong>Tips:</strong> Mode 2 Player optimal di layar lebar.
+                <p id="p2-warning" class="hidden text-orange-600 bg-orange-100 p-2 rounded text-center mt-2 border border-orange-200" style="font-size: calc(0.75rem * var(--ui-scale))">
+                    <strong>Tips:</strong> Mode 2 Player optimal di layar lebar (TV 4K).
                 </p>
             </div>
-            <div class="w-full max-w-sm mb-3">
-                <p class="text-xs font-bold text-slate-400 mb-1">Mode:</p>
-                <div class="flex gap-2">
-                    <button id="mode-time" onclick="selectMode('time')" class="btn btn-primary flex-1 py-2 text-sm selected">Time Attack</button>
-                    <button id="mode-endless" onclick="selectMode('endless')" class="btn btn-primary flex-1 py-2 text-sm">Endless</button>
+            <div class="w-full max-w-sm-responsive mb-responsive">
+                <p class="text-xs font-bold text-slate-400 mb-1" style="font-size: calc(0.75rem * var(--ui-scale))">Mode:</p>
+                <div class="flex flex-gap-responsive">
+                    <button id="mode-time" onclick="selectMode('time')" class="btn btn-primary flex-1 py-2 selected">Time Attack</button>
+                    <button id="mode-endless" onclick="selectMode('endless')" class="btn btn-primary flex-1 py-2">Endless</button>
                 </div>
             </div>
-            <div class="w-full max-w-sm mb-3">
-                <p class="text-xs font-bold text-slate-400 mb-1">Kesulitan:</p>
+            <div class="w-full max-w-sm-responsive mb-responsive">
+                <p class="text-xs font-bold text-slate-400 mb-1" style="font-size: calc(0.75rem * var(--ui-scale))">Kesulitan:</p>
                 <div class="flex flex-col gap-1">
-                    <button id="lvl-1" onclick="selectLevel(1)" class="btn btn-success py-1 text-sm selected">🌱 Pemula</button>
-                    <button id="lvl-2" onclick="selectLevel(2)" class="btn btn-warning py-1 text-sm">🛡️ Penjaga</button>
-                    <button id="lvl-3" onclick="selectLevel(3)" class="btn btn-danger py-1 text-sm">⚔️ Eco Ranger</button>
+                    <button id="lvl-1" onclick="selectLevel(1)" class="btn btn-success py-1 selected">🌱 Pemula</button>
+                    <button id="lvl-2" onclick="selectLevel(2)" class="btn btn-warning py-1">🛡️ Penjaga</button>
+                    <button id="lvl-3" onclick="selectLevel(3)" class="btn btn-danger py-1">⚔️ Eco Ranger</button>
                 </div>
             </div>
-            <div id="duration-selector" class="w-full max-w-sm mb-4">
-                <p class="text-xs font-bold text-slate-400 mb-1">Durasi:</p>
-                <div class="flex gap-2">
-                    <button id="dur-1" onclick="selectDuration(1)" class="btn btn-primary py-1 text-sm selected">1 Min</button>
-                    <button id="dur-2" onclick="selectDuration(2)" class="btn btn-primary py-1 text-sm">2 Min</button>
-                    <button id="dur-3" onclick="selectDuration(3)" class="btn btn-primary py-1 text-sm">3 Min</button>
+            <div id="duration-selector" class="w-full max-w-sm-responsive mb-4">
+                <p class="text-xs font-bold text-slate-400 mb-1" style="font-size: calc(0.75rem * var(--ui-scale))">Durasi:</p>
+                <div class="flex flex-gap-responsive">
+                    <button id="dur-1" onclick="selectDuration(1)" class="btn btn-primary py-1 selected">1 Min</button>
+                    <button id="dur-2" onclick="selectDuration(2)" class="btn btn-primary py-1">2 Min</button>
+                    <button id="dur-3" onclick="selectDuration(3)" class="btn btn-primary py-1">3 Min</button>
                 </div>
             </div>
-            <div class="flex gap-2 w-full max-w-sm mt-2">
+            <div class="flex flex-gap-responsive w-full max-w-sm-responsive mt-2">
                 <button onclick="showScreen('menu-screen')" class="btn bg-slate-400 text-white">Kembali</button>
                 <button onclick="startGame()" class="btn btn-success">Mulai! ▶</button>
             </div>
@@ -241,9 +290,9 @@
 
         <!-- 3. TUTORIAL -->
         <div id="tutorial-screen" class="ui-overlay hidden">
-            <h2 class="text-2xl font-bold text-slate-800 mb-4">Cara Bermain</h2>
-            <img src="assets/tangan.png" class="w-16 mb-4 animate-bounce" onerror="this.style.display='none'">
-            <ul class="text-left list-disc pl-6 space-y-2 text-slate-700 max-w-sm text-sm">
+            <h2 class="text-3xl-responsive font-bold text-slate-800 mb-4">Cara Bermain</h2>
+            <img src="assets/tangan.png" class="mb-4 animate-bounce" style="width: calc(64px * var(--ui-scale))" onerror="this.style.display='none'">
+            <ul class="text-left list-disc pl-6 space-y-2 text-slate-700 max-w-sm-responsive" style="font-size: calc(0.9rem * var(--ui-scale))">
                 <li>Sampah jatuh dari atas.</li>
                 <li><strong>Drag & Drop</strong> sampah ke tong yang benar.</li>
                 <li><strong>Mode 2 Player:</strong> Layar terbagi dua. Pemain 1 kiri, Pemain 2 kanan.</li>
@@ -254,35 +303,35 @@
 
         <!-- 4. MATERI -->
         <div id="materi-screen" class="ui-overlay hidden">
-            <h2 class="text-2xl font-bold text-slate-800 mb-4">Jenis Sampah</h2>
+            <h2 class="text-3xl-responsive font-bold text-slate-800 mb-4">Jenis Sampah</h2>
             <div class="card border-green-200 bg-green-50">
-                <div class="text-3xl">🍎</div>
-                <div><h3 class="font-bold text-green-700">Organik</h3><p class="text-xs">Mudah membusuk (Sisa makanan, daun).</p></div>
+                <div style="font-size: calc(2.25rem * var(--ui-scale))">🍎</div>
+                <div><h3 class="font-bold text-green-700" style="font-size: calc(1rem * var(--ui-scale))">Organik</h3><p class="text-slate-600" style="font-size: calc(0.75rem * var(--ui-scale))">Mudah membusuk (Sisa makanan, daun).</p></div>
             </div>
             <div class="card border-yellow-200 bg-yellow-50">
-                <div class="text-3xl">🥤</div>
-                <div><h3 class="font-bold text-yellow-700">Anorganik</h3><p class="text-xs">Sulit terurai (Plastik, kertas, kaleng).</p></div>
+                <div style="font-size: calc(2.25rem * var(--ui-scale))">🥤</div>
+                <div><h3 class="font-bold text-yellow-700" style="font-size: calc(1rem * var(--ui-scale))">Anorganik</h3><p class="text-slate-600" style="font-size: calc(0.75rem * var(--ui-scale))">Sulit terurai (Plastik, kertas, kaleng).</p></div>
             </div>
             <div class="card border-red-200 bg-red-50">
-                <div class="text-3xl">🔋</div>
-                <div><h3 class="font-bold text-red-700">B3 / Berbahaya</h3><p class="text-xs">Beracun (Baterai, obat, kimia).</p></div>
+                <div style="font-size: calc(2.25rem * var(--ui-scale))">🔋</div>
+                <div><h3 class="font-bold text-red-700" style="font-size: calc(1rem * var(--ui-scale))">B3 / Berbahaya</h3><p class="text-slate-600" style="font-size: calc(0.75rem * var(--ui-scale))">Beracun (Baterai, obat, kimia).</p></div>
             </div>
             <button onclick="showScreen('menu-screen')" class="btn btn-primary mt-4">Kembali</button>
         </div>
 
         <!-- 5. LEADERBOARD SCREEN -->
         <div id="leaderboard-screen" class="ui-overlay hidden">
-            <h2 class="text-3xl font-bold text-purple-700 mb-4">🏆 Papan Peringkat</h2>
+            <h2 class="text-3xl-responsive font-bold text-purple-700 mb-4">🏆 Papan Peringkat</h2>
             
             <div class="tab-container">
                 <div id="tab-1p" class="tab-btn active" onclick="switchLbTab('1p')">Solo (1P)</div>
                 <div id="tab-2p" class="tab-btn" onclick="switchLbTab('2p')">Duel (2P)</div>
             </div>
 
-            <div class="bg-slate-100 p-2 rounded-t-lg w-full max-w-[400px] flex text-xs font-bold text-slate-500">
-                <span class="w-[30px] text-center">#</span>
+            <div class="header-bg">
+                <span style="width: calc(30px * var(--ui-scale)); text-align: center;">#</span>
                 <span class="flex-1 pl-2">Nama Pemain</span>
-                <span class="w-[80px] text-right pr-2">Skor</span>
+                <span style="width: calc(80px * var(--ui-scale)); text-align: right; padding-right: 0.5rem;">Skor</span>
             </div>
             <div id="lb-content" class="lb-list">
                 <!-- Content injected via JS -->
@@ -293,20 +342,20 @@
 
         <!-- 6. PAUSE SCREEN -->
         <div id="pause-screen" class="ui-overlay hidden">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">Permainan Dijeda</h2>
+            <h2 class="text-3xl-responsive font-bold text-slate-800 mb-6">Permainan Dijeda</h2>
             <button onclick="resumeGame()" class="btn btn-primary">▶ Lanjutkan</button>
             <button onclick="quitToMenu()" class="btn btn-danger">🏠 Keluar ke Menu</button>
         </div>
 
         <!-- 7. GAME OVER -->
         <div id="game-over-screen" class="ui-overlay hidden">
-            <h1 id="go-title" class="text-3xl font-bold text-slate-800 mb-2">Selesai!</h1>
+            <h1 id="go-title" class="text-3xl-responsive font-bold text-slate-800 mb-2">Selesai!</h1>
             
-            <div id="go-results" class="flex flex-col gap-4 mb-4 w-full max-w-md"></div>
+            <div id="go-results" class="flex flex-col gap-4 mb-4 w-full max-w-md-responsive"></div>
 
             <!-- Input Nama untuk Leaderboard -->
-            <div id="save-score-container" class="w-full max-w-xs bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
-                <h3 class="text-sm font-bold text-slate-500 mb-2 text-center">Simpan ke Leaderboard</h3>
+            <div id="save-score-container" class="w-full max-w-sm-responsive bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
+                <h3 class="font-bold text-slate-500 mb-2 text-center" style="font-size: calc(0.875rem * var(--ui-scale))">Simpan ke Leaderboard</h3>
                 
                 <div id="input-p1-container">
                     <input type="text" id="input-p1" class="input-field" placeholder="Nama Pemain 1" maxlength="10">
@@ -316,10 +365,10 @@
                     <input type="text" id="input-p2" class="input-field" placeholder="Nama Pemain 2" maxlength="10">
                 </div>
 
-                <button onclick="submitScore()" class="btn btn-purple py-2 text-sm mt-2">💾 Simpan Skor</button>
+                <button onclick="submitScore()" class="btn btn-purple py-2 mt-2">💾 Simpan Skor</button>
             </div>
 
-            <div class="flex gap-2 w-full max-w-xs">
+            <div class="flex flex-gap-responsive w-full max-w-sm-responsive">
                 <button onclick="showScreen('setup-screen')" class="btn btn-primary flex-1">Main Lagi</button>
                 <button onclick="showScreen('menu-screen')" class="btn btn-warning flex-1">Menu</button>
             </div>
@@ -337,7 +386,7 @@
                 correct: 'assets/benar.ogg', 
                 wrong: 'assets/salah.ogg', 
                 bgm: 'assets/bgmusic.ogg',
-                touch: 'assets/touch.ogg' // ADDED TOUCH SOUND
+                touch: 'assets/touch.ogg'
             },
             bins: {
                 organik: { idle: 'assets/organik_1.png', active: 'assets/organik_2.png', color: '#4ade80' },
@@ -373,16 +422,14 @@
         function saveToLeaderboard(key, entry) {
             const list = getLeaderboard(key);
             list.push(entry);
-            // Sort Descending by Score
             list.sort((a, b) => b.score - a.score);
-            // Keep Top 10
             const top10 = list.slice(0, 10);
             localStorage.setItem(key, JSON.stringify(top10));
         }
 
         function showLeaderboard() {
             showScreen('leaderboard-screen');
-            switchLbTab('1p'); // Default tab
+            switchLbTab('1p'); 
         }
 
         function switchLbTab(type) {
@@ -394,7 +441,7 @@
             container.innerHTML = '';
 
             if (list.length === 0) {
-                container.innerHTML = '<div class="text-center text-slate-400 py-4">Belum ada skor tersimpan.</div>';
+                container.innerHTML = '<div class="text-center text-slate-400 py-4" style="font-size: calc(1rem * var(--ui-scale))">Belum ada skor tersimpan.</div>';
                 return;
             }
 
@@ -404,7 +451,7 @@
                 div.className = 'lb-item';
                 div.innerHTML = `
                     <div class="lb-rank">${index + 1}</div>
-                    <div class="lb-name truncate">${nameDisplay} <span class="text-xs text-slate-400 font-normal">(${item.mode})</span></div>
+                    <div class="lb-name truncate">${nameDisplay} <span class="text-slate-400 font-normal" style="font-size: 0.8em">(${item.mode})</span></div>
                     <div class="lb-score">${item.score}</div>
                 `;
                 container.appendChild(div);
@@ -425,7 +472,6 @@
                 saveToLeaderboard(LB_KEY_1P, entry);
             } else {
                 const p2Name = document.getElementById('input-p2').value.trim() || 'Player 2';
-                // Determine Winner for display or save the match result
                 let text = "";
                 let winningScore = 0;
 
@@ -471,7 +517,7 @@
         preloadAudio('correct', assetConfig.audio.correct, false);
         preloadAudio('wrong', assetConfig.audio.wrong, false);
         preloadAudio('bgm', assetConfig.audio.bgm, true);
-        preloadAudio('touch', assetConfig.audio.touch, false); // PRELOAD TOUCH
+        preloadAudio('touch', assetConfig.audio.touch, false);
 
         ['organik', 'anorganik', 'berbahaya'].forEach(type => {
             for(let i=1; i<=10; i++) {
@@ -491,15 +537,23 @@
                 this.endlessStartTime = Date.now();
                 this.currentLevel = gameConfig.level;
                 this.trashes = []; this.feedbackEffects = []; this.bins = []; this.activeDrags = {};
-                this.lastSpawnTime = 0; this.spawnRate = 2000; this.baseSpeed = 2;
-                this.setupBins(); this.setDifficulty(this.currentLevel);
+                this.lastSpawnTime = 0; 
+                
+                this.setDifficulty(this.currentLevel);
+                this.setupBins(); 
             }
+            
             setDifficulty(lvl) {
-                if (lvl === 1) { this.spawnRate = 2500; this.baseSpeed = 1.5; }
-                else if (lvl === 2) { this.spawnRate = 1500; this.baseSpeed = 2.5; }
-                else { this.spawnRate = 800; this.baseSpeed = 4.0 + ((lvl-3)*0.5); }
+                // Relatif terhadap tinggi layar agar kecepatan konsisten di 4K
+                const heightFactor = this.height / 1000; // Normalisasi ke tinggi 1000px
+                
+                if (lvl === 1) { this.spawnRate = 2500; this.baseSpeed = 1.5 * heightFactor; }
+                else if (lvl === 2) { this.spawnRate = 1500; this.baseSpeed = 2.5 * heightFactor; }
+                else { this.spawnRate = 800; this.baseSpeed = (4.0 + ((lvl-3)*0.5)) * heightFactor; }
             }
+            
             adjustTime(diff) { this.endTime += diff; this.endlessStartTime += diff; }
+            
             setupBins() {
                 this.bins = [];
                 let pad = Math.max(2, this.width * 0.02);
@@ -508,6 +562,7 @@
                 this.bins.push(new Bin('anorganik', 'Anorganik', '#facc15', pad*2+w, w));
                 this.bins.push(new Bin('berbahaya', 'Berbahaya', '#ef4444', pad*3+w*2, w));
             }
+            
             spawnTrash(timestamp) {
                 if (this.isGameOver) return;
                 if (gameConfig.mode === 'endless') {
@@ -523,6 +578,7 @@
                     this.lastSpawnTime = timestamp;
                 }
             }
+            
             update(timestamp) {
                 if (this.isGameOver) return;
                 if (gameConfig.mode === 'time') {
@@ -532,14 +588,12 @@
 
                 this.spawnTrash(timestamp);
 
-                // Reset hover state for all bins
                 this.bins.forEach(b => b.isHovered = false);
 
                 for (let i = this.trashes.length - 1; i >= 0; i--) {
                     let t = this.trashes[i];
                     if (t.draggingBy === null) t.update();
                     else {
-                        // Check overlap with bins to trigger animation
                         for (let b of this.bins) {
                             if (t.x > b.x && t.x < b.x + b.width && t.y > b.y && t.y < b.y + b.height) {
                                 b.isHovered = true;
@@ -553,6 +607,7 @@
                     let fx = this.feedbackEffects[i]; fx.update(); if (fx.life <= 0) this.feedbackEffects.splice(i, 1);
                 }
             }
+            
             draw(ctx) {
                 ctx.save(); ctx.translate(this.xOffset, 0);
                 if (gameConfig.players === 2) { ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, this.height); ctx.stroke(); }
@@ -561,12 +616,16 @@
                 this.feedbackEffects.forEach(f => f.draw(ctx));
                 if (this.isGameOver) {
                     ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0, 0, this.width, this.height);
-                    ctx.fillStyle = 'white'; ctx.font = 'bold 30px Fredoka'; ctx.textAlign = 'center';
+                    ctx.fillStyle = 'white'; 
+                    // Dynamic font size for game over
+                    let fontSize = Math.min(this.width / 10, 40);
+                    ctx.font = `bold ${fontSize}px Fredoka`; ctx.textAlign = 'center';
                     ctx.fillText("SELESAI", this.width/2, this.height/2);
-                    ctx.font = '20px Fredoka'; ctx.fillText(`Skor: ${this.score}`, this.width/2, this.height/2 + 40);
+                    ctx.font = `${fontSize*0.7}px Fredoka`; ctx.fillText(`Skor: ${this.score}`, this.width/2, this.height/2 + fontSize + 10);
                 }
                 ctx.restore();
             }
+            
             handleResult(res) {
                 if (this.isGameOver) return;
                 if (res === 'correct') {
@@ -582,21 +641,26 @@
                     else { this.lives--; this.spawnFeedback('wrong', "💔"); }
                 }
             }
+            
             spawnFeedback(type, text) {
                 this.feedbackEffects.push(new FeedbackEffect(this.width, this.height, type, text));
                 let aud = loadedAudio[type]; if(aud) { aud.currentTime=0; aud.play().catch(()=>{}); }
             }
+            
             inputStart(id, localX, y) {
                 if (this.isGameOver) return;
                 for (let i = this.trashes.length - 1; i >= 0; i--) {
                     let t = this.trashes[i];
                     if (t.draggingBy !== null) continue;
-                    let hitRadius = Math.max(t.size, 40);
+                    // Extended hitbox for large screens
+                    let hitRadius = Math.max(t.size * 1.5, 60);
                     let dist = Math.sqrt((localX - t.x)**2 + (y - t.y)**2);
                     if (dist < hitRadius) { t.draggingBy = id; this.activeDrags[id] = t; return; }
                 }
             }
+            
             inputMove(id, localX, y) { let t = this.activeDrags[id]; if (t) { t.x = localX; t.y = y; } }
+            
             inputEnd(id) {
                 let t = this.activeDrags[id];
                 if (t) {
@@ -619,13 +683,12 @@
             constructor(type, label, color, x, width) {
                 this.type = type; this.label = label; this.fallbackColor = color;
                 this.x = x; this.width = width; this.height = 0;
-                this.isHovered = false; // Add hover state
+                this.isHovered = false; 
             }
             draw(ctx, parentHeight) {
-                this.height = Math.min(this.width * 1.2, 130);
+                this.height = Math.min(this.width * 1.2, 130 * (window.devicePixelRatio > 1.5 ? 1.5 : 1));
                 this.y = parentHeight - this.height - 20;
                 
-                // Select image based on hover state
                 let k = `bin_${this.type}_${this.isHovered ? 'active' : 'idle'}`;
                 let img = loadedImages[k];
                 if(img && img.complete) ctx.drawImage(img, this.x, this.y, this.width, this.height);
@@ -643,10 +706,13 @@
                 this.type = types[Math.floor(Math.random()*types.length)];
                 let arr = trashData[this.type];
                 this.key = arr[Math.floor(Math.random()*arr.length)];
-                this.size = Math.floor(Math.min(50, Math.max(30, maxWidth * 0.22)));
+                
+                // Adaptive size based on screen width but clamped
+                this.size = Math.floor(Math.min(80, Math.max(40, maxWidth * 0.22)));
+                
                 this.x = Math.random() * (maxWidth - this.size*2) + this.size;
                 this.y = -60;
-                this.speed = speedBase + (Math.random()*0.5);
+                this.speed = speedBase + (Math.random() * (speedBase * 0.2)); // Variant
                 this.angle = Math.random() * 6.28; this.spin = (Math.random()-0.5)*0.1;
                 this.draggingBy = null;
             }
@@ -679,10 +745,16 @@
             draw(ctx) {
                 ctx.save(); ctx.globalAlpha = Math.max(0, this.life);
                 let img = loadedImages[this.type];
-                if(img && img.complete) { let s = 80*this.scale; ctx.drawImage(img, this.x-s/2, this.y-s/2, s, s); }
+                if(img && img.complete) { 
+                    // Adaptive effect size
+                    let s = Math.min(150, Math.max(80, window.innerWidth * 0.05)) * this.scale; 
+                    ctx.drawImage(img, this.x-s/2, this.y-s/2, s, s); 
+                }
                 if(this.text) {
                     ctx.fillStyle = this.type==='correct'?'#16a34a':'#ef4444';
-                    ctx.font = "bold 24px Fredoka"; ctx.textAlign="center";
+                    // Adaptive font
+                    let fs = Math.min(40, Math.max(24, window.innerWidth * 0.02));
+                    ctx.font = `bold ${fs}px Fredoka`; ctx.textAlign="center";
                     ctx.shadowColor="white"; ctx.shadowBlur=4; ctx.fillText(this.text, this.x, this.y+50);
                 }
                 ctx.restore();
@@ -719,10 +791,21 @@
                 container.classList.add('single-player'); container.classList.remove('two-player');
                 document.getElementById('hud-layer').classList.remove('two-player-mode');
             }
-            canvas.width = container.clientWidth; canvas.height = container.clientHeight;
+            
+            // Set canvas size
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Re-setup bins for existing players if running
             if (isPlaying && !isPaused) {
                 let w = canvas.width / gameConfig.players;
-                players.forEach(p => { p.width = w; p.height = canvas.height; p.xOffset = p.id * w; p.setupBins(); });
+                players.forEach(p => { 
+                    p.width = w; 
+                    p.height = canvas.height; 
+                    p.xOffset = p.id * w; 
+                    p.setupBins(); 
+                    p.setDifficulty(p.currentLevel); // Re-calc speed for height
+                });
             }
         }
 
@@ -799,7 +882,6 @@
             let bgm = loadedAudio['bgm']; if(bgm) bgm.pause();
             pauseBtn.classList.add('hidden');
             
-            // Show Inputs based on Players
             document.getElementById('save-score-container').classList.remove('hidden');
             document.getElementById('input-p1').value = '';
             document.getElementById('input-p2').value = '';
@@ -814,12 +896,17 @@
             }
 
             let resHtml = "";
+            let p1Score = players[0].score;
             if (gameConfig.players === 1) {
-                resHtml = `<div class="bg-blue-100 p-4 rounded-lg text-center"><p class="text-lg font-bold">Skor Kamu</p><p class="text-4xl font-bold text-green-600">${players[0].score}</p></div>`;
+                resHtml = `<div class="bg-blue-100 p-4 rounded-lg text-center" style="font-size: calc(1rem * var(--ui-scale))"><p class="font-bold">Skor Kamu</p><p class="text-4xl font-bold text-green-600" style="font-size: calc(2.25rem * var(--ui-scale))">${p1Score}</p></div>`;
             } else {
-                let p1 = players[0].score; let p2 = players[1].score;
-                let winText = p1 > p2 ? "🏆 Pemain 1 Menang!" : (p2 > p1 ? "🏆 Pemain 2 Menang!" : "🤝 Seri!");
-                resHtml = `<h3 class="text-2xl font-bold text-center text-purple-600 mb-2">${winText}</h3><div class="flex gap-4 w-full"><div class="flex-1 bg-blue-100 p-4 rounded-lg text-center"><p class="font-bold">Pemain 1</p><p class="text-3xl text-green-600">${p1}</p></div><div class="flex-1 bg-purple-100 p-4 rounded-lg text-center"><p class="font-bold">Pemain 2</p><p class="text-3xl text-green-600">${p2}</p></div></div>`;
+                let p2Score = players[1].score;
+                let winText = p1Score > p2Score ? "🏆 Pemain 1 Menang!" : (p2Score > p1Score ? "🏆 Pemain 2 Menang!" : "🤝 Seri!");
+                resHtml = `<h3 class="text-2xl font-bold text-center text-purple-600 mb-2" style="font-size: calc(1.5rem * var(--ui-scale))">${winText}</h3>
+                <div class="flex flex-gap-responsive w-full">
+                    <div class="flex-1 bg-blue-100 p-4 rounded-lg text-center" style="font-size: calc(1rem * var(--ui-scale))"><p class="font-bold">Pemain 1</p><p class="text-green-600 font-bold" style="font-size: calc(1.875rem * var(--ui-scale))">${p1Score}</p></div>
+                    <div class="flex-1 bg-purple-100 p-4 rounded-lg text-center" style="font-size: calc(1rem * var(--ui-scale))"><p class="font-bold">Pemain 2</p><p class="text-green-600 font-bold" style="font-size: calc(1.875rem * var(--ui-scale))">${p2Score}</p></div>
+                </div>`;
             }
             document.getElementById('go-results').innerHTML = resHtml;
             showScreen('game-over-screen');
@@ -837,10 +924,8 @@
                 if (gameConfig.players === 2 && gx > pWidth) pIdx = 1;
                 let localX = gx - (pIdx * pWidth); let player = players[pIdx];
                 if (type === 'start') {
-                    // Play Touch Sound
                     let aud = loadedAudio['touch'];
                     if(aud) { aud.currentTime=0; aud.play().catch(()=>{}); }
-                    
                     player.inputStart(t.identifier, localX, gy);
                 }
                 else if (type === 'move') player.inputMove(t.identifier, localX, gy);
@@ -848,7 +933,6 @@
             });
         }
 
-        // UI Sound Listener
         document.querySelectorAll('.btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 let aud = loadedAudio['touch'];
