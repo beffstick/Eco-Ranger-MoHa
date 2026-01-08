@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eco Ranger: Ultimate (4K Ready)</title>
+    <title>Eco Ranger MoHa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
@@ -199,24 +199,24 @@
         
         .header-bg {
             background-color: #f1f5f9;
-            padding: calc(8px * var(--ui-scale));
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
-            width: 100%;
-            max-width: calc(400px * var(--ui-scale));
-            display: flex;
-            font-size: calc(0.75rem * var(--ui-scale));
-            font-weight: 700;
+        .scale-btn {
+            padding: calc(8px * var(--ui-scale)) calc(16px * var(--ui-scale));
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            background: white;
+            font-weight: bold;
+            font-size: calc(0.9rem * var(--ui-scale));
             color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        
-        /* Flex Wrappers */
-        .flex-gap-responsive { gap: calc(0.5rem * var(--ui-scale)); }
-        .mb-responsive { margin-bottom: calc(0.75rem * var(--ui-scale)); }
-        .text-xl-responsive { font-size: calc(1.25rem * var(--ui-scale)); line-height: 1.75rem; }
-        .text-3xl-responsive { font-size: calc(1.875rem * var(--ui-scale)); line-height: 2.25rem; }
-        .max-w-sm-responsive { max-width: calc(24rem * var(--ui-scale)); }
-        .max-w-md-responsive { max-width: calc(28rem * var(--ui-scale)); }
+        .scale-btn:hover { background: #f1f5f9; }
+        .scale-btn.selected {
+            background: #0ea5e9;
+            color: white;
+            border-color: #0284c7;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -244,6 +244,19 @@
             <button onclick="showLeaderboard()" class="btn btn-purple">🏆 Leaderboard</button>
             <button onclick="showScreen('tutorial-screen')" class="btn btn-warning">📖 Cara Bermain</button>
             <button onclick="showScreen('materi-screen')" class="btn btn-success">📚 Materi Sampah</button>
+
+            <!-- Manual Scale Selector -->
+            <div class="mt-4 text-center" style="margin-top: calc(20px * var(--ui-scale))">
+                <p class="text-xs font-bold text-slate-400 mb-2" style="font-size: calc(0.75rem * var(--ui-scale))">Atur Ukuran UI (Manual):</p>
+                <div class="flex gap-2 justify-center" style="gap: calc(5px * var(--ui-scale))">
+                    <button onclick="setGameScale(0.7)" class="scale-btn" id="scale-btn-1">1</button>
+                    <button onclick="setGameScale(0.85)" class="scale-btn" id="scale-btn-2">2</button>
+                    <button onclick="setGameScale(1)" class="scale-btn selected" id="scale-btn-3">3</button>
+                    <button onclick="setGameScale(1.5)" class="scale-btn" id="scale-btn-4">4</button>
+                    <button onclick="setGameScale(2.5)" class="scale-btn" id="scale-btn-5">5</button>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1" style="font-size: calc(0.6rem * var(--ui-scale))">(1 = Kecil, 3 = Normal, 5 = Besar)</p>
+            </div>
         </div>
 
         <!-- 2. SETUP SCREEN -->
@@ -417,6 +430,28 @@
         function getLeaderboard(key) {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : [];
+        }
+
+        // --- SCALE LOGIC ---
+        function setGameScale(scale) {
+            // Set CSS Variable
+            document.documentElement.style.setProperty('--ui-scale', scale);
+            
+            // Update Button State
+            document.querySelectorAll('.scale-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            let btnId = 'scale-btn-3'; // Default normal (scale 1)
+            if(scale === 0.7) btnId = 'scale-btn-1';
+            if(scale === 0.85) btnId = 'scale-btn-2';
+            if(scale === 1) btnId = 'scale-btn-3';
+            if(scale === 1.5) btnId = 'scale-btn-4';
+            if(scale === 2.5) btnId = 'scale-btn-5';
+            
+            const btn = document.getElementById(btnId);
+            if(btn) btn.classList.add('selected');
+
+            // Trigger Resize to update canvas elements
+            resizeGame();
         }
 
         function saveToLeaderboard(key, entry) {
